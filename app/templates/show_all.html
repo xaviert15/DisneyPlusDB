@@ -26,7 +26,7 @@
         <td class="col-id">#{{ s.show_id }}</td>
         <td class="col-name">{{ s.title }}</td>
         <td class="col-type">{{ s.show_type }}</td>
-        <td class="col-genre">{{ s.genre_name }}</td>
+        <td class="col-genre"> <a href="/genre/{{ s.genre_id }}/">{{ s.genre_name }}</a> </td>
         <td class="col-desc">{{ s.description }}</td>
         <td class="col-rdate">{{ s.release_date[:4] }}</td>
         <td class="col-adate">{{ s.date_added }}</td>

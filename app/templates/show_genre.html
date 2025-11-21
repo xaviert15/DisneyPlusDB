@@ -19,7 +19,7 @@
       {% for g in genres %}
       <tr>
         <td class="col-id">#{{ g.genre_id }}</td>
-        <td class="col-name">{{ g.name }}</td>
+        <td class="col-name"> <a href="/genre/{{ g.genre_id }}/">{{ g.name }}</a> </td>
         <td class="col-counter">{{ g.counter }}</td>
       </tr>
       {% endfor %}

@@ -19,7 +19,7 @@
       {% for r in ratings %}
       <tr>
         <td class="col-id">#{{ r.rating_id }}</td>
-        <td class="col-name">{{ r.code }}</td>
+        <td class="col-name"> <a href="/rating/{{ r.rating_id }}/">{{ r.code }}</a> </td>
         <td class="col-counter">{{ r.counter }}</td>
       </tr>
       {% endfor %}

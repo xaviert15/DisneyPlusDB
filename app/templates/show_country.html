@@ -19,7 +19,7 @@
       {% for c in countries %}
       <tr>
         <td class="col-id">#{{ c.country_id }}</td>
-        <td class="col-name">{{ c.name }}</td>
+        <td class="col-name"> <a href="/country/{{ c.country_id }}/">{{ c.name }}</a> </td>
         <td class="col-counter">{{ c.counter }}</td>
       </tr>
       {% endfor %}
