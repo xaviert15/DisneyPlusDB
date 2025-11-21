@@ -25,8 +25,14 @@
             <tr>
                 <td class="col-id">#{{ s.show_id }}</td>
                 <td class="col-name">{{ s.title }}</td>
-                <td class="col-type">{{ s.show_type }}</td>
-                <td class="col-genre">{{ s.genre_name }}</td>
+                <td class="col-type">
+                    {% if s.show_type == 'Movie' %}
+                        <a href="/movies/">{{ s.show_type }}</a>
+                    {% else %}
+                        <a href="/tvshows/">{{ s.show_type }}</a>
+                    {% endif %}
+                </td>
+                <td class="col-genre"> <a href="/genre/{{ t.genre_id }}/">{{ t.genre_name }}</a> </td>
                 <td class="col-desc">{{ s.description }}</td>
                 <td class="col-rdate">{{ s.release_date[:4] }}</td>
                 <td class="col-adate">{{ s.date_added }}</td>
@@ -89,6 +95,18 @@
     .col-name {
         font-weight: 500;
         color: var(--text-primary);
+    }
+
+    .col-type a, .col-genre a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.2s;
+    }
+
+    .col-type a:hover, .col-genre a:hover {
+        color: #61dafb;
+        text-decoration: underline;
     }
 </style>
 

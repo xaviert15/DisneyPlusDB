@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="zone-header">
-    <h2>{{ country.name }}</h2>
-    <p>Lista de filmes e séries associados a este país.</p>
+    <h2>{{ year }}</h2>
+    <p>Lista de filmes e séries realizados neste ano.</p>
 </div>
 
 <div class="table-container">
@@ -15,7 +15,6 @@
                 <th class="col-type">Tipo</th>
                 <th class="col-genre">Género</th>
                 <th class="col-desc">Descrição</th>
-                <th class="col-rdate">Ano de Realização</th>
                 <th class="col-adate">Disponível desde</th>
                 <th class="col-dur">Duração</th>
             </tr>
@@ -34,7 +33,6 @@
                 </td>
                 <td class="col-genre"> <a href="/genre/{{ s.genre_id }}/">{{ s.genre_name }}</a> </td>
                 <td class="col-desc">{{ s.description }}</td>
-                <td class="col-rdate">{{ s.release_date[:4] }}</td>
                 <td class="col-adate">{{ s.date_added }}</td>
                 <td class="col-dur">{{ s.duration_value }} {{s.duration_unit}}</td>
             </tr>

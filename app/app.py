@@ -23,6 +23,32 @@ def show_all():
         ''').fetchall()
     return render_template('show_all.html', shows=shows)
 
+# Filmes
+@APP.route('/movies/')
+def show_movies():
+    movies = db.execute('''
+        SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
+        Show as s
+        LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+        LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+        WHERE s.show_type="Movie"
+        GROUP BY s.show_id
+        ''').fetchall()
+    return render_template('show_movies.html', movies=movies)
+
+# TV Shows
+@APP.route('/tvshows/')
+def show_tvshows():
+    tvshows = db.execute('''
+        SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
+        Show as s
+        LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+        LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+        WHERE s.show_type="TV Show"
+        GROUP BY s.show_id
+        ''').fetchall()
+    return render_template('show_tvshows.html', tvshows=tvshows)
+
 # Atores e Diretores
 @APP.route('/persons/')
 def show_persons():
@@ -120,6 +146,22 @@ def rating(code):
         GROUP BY s.show_id
     ''', [code]).fetchall()
     return render_template('rating.html', rating=rating, shows=shows)
+
+# Ano de Realização
+@APP.route('/year/<int:code>/')
+def year(code):
+    year_str = str(code)
+    shows = db.execute('''
+        SELECT s.show_id, s.title, s.description, s.show_type, 
+               s.release_date, s.date_added, s.duration_value, 
+               s.duration_unit, s.rating_id, g.name as genre_name 
+        FROM Show as s
+        LEFT JOIN Show_Genre AS sg on s.show_id = sg.show_id
+        LEFT JOIN Genre AS g on sg.genre_id = g.genre_id
+        WHERE strftime('%Y', s.release_date) = ?
+        GROUP BY s.show_id
+    ''', [year_str]).fetchall()
+    return render_template('year.html', year=code, shows=shows)
 
 # Queries (Placeholders)
 @APP.route('/queries/top-actors')
