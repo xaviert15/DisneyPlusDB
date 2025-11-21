@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disney+ DB Control Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="main-header">
+            <div class="logo">
+                <a href="/">Disney+ <span>DB</span></a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/show/">Catálogo</a></li>
+                    <li><a href="/persons/">Pessoas</a></li>
+                    <li><a href="/genre/">Géneros</a></li>
+                    <li><a href="/country/">Países</a></li>
+                    <li><a href="/rating/">Ratings</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="content-wrapper">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2024 Disney+ Database Project. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

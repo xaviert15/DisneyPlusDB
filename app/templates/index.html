@@ -1,17 +1,81 @@
-{% extends 'base.html' %}
+{% extends "layout.html" %}
 
 {% block content %}
+<div class="dashboard-container">
+  <section class="hero-section">
+    <h1>Painel de Controlo</h1>
+    <p>Gestão e visualização centralizada da base de dados Disney+.</p>
+  </section>
 
-<!-- 
-  Conteúdo apenas simples para começar. 
- 
-  Veja aplicação fazendo interface à MovieStream para exemplos concretos.
--->
+  <div class="dashboard-grid">
+    <!-- Zone A: Data Exploration -->
+    <section class="zone-card exploration-zone">
+      <div class="zone-header">
+        <h2>Exploração de Dados</h2>
+        <p>Acesso direto às tabelas principais</p>
+      </div>
+      <div class="card-grid">
+        <a href="/show/" class="nav-card">
+          <div class="icon">🎬</div>
+          <h3>Catálogo Completo</h3>
+          <p>Filmes e Séries</p>
+        </a>
+        <a href="/persons/" class="nav-card">
+          <div class="icon">👥</div>
+          <h3>Pessoas</h3>
+          <p>Atores e Diretores</p>
+        </a>
+        <a href="/genre/" class="nav-card">
+          <div class="icon">🎭</div>
+          <h3>Géneros</h3>
+          <p>Categorias de conteúdo</p>
+        </a>
+        <a href="/country/" class="nav-card">
+          <div class="icon">🌍</div>
+          <h3>Países</h3>
+          <p>Origem das produções</p>
+        </a>
+        <a href="/rating/" class="nav-card">
+          <div class="icon">⭐</div>
+          <h3>Classificações</h3>
+          <p>Ratings e avaliações</p>
+        </a>
+      </div>
+    </section>
 
-<h1> DisneyPlus Database </h1>
-
-<h2> ... and hello again</h2>
-
-This is the entry page for the application!
-
+    <!-- Zone B: Statistics & Queries -->
+    <section class="zone-card statistics-zone">
+      <div class="zone-header">
+        <h2>Estatísticas e Consultas</h2>
+        <p>Análise rápida da base de dados</p>
+      </div>
+      <ul class="query-list">
+        <li>
+          <a href="/queries/top-actors">
+            <span class="query-number">01</span>
+            <span class="query-title">Top 5 Atores com mais filmes</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
+        <li>
+          <a href="/queries/avg-duration">
+            <span class="query-number">02</span>
+            <span class="query-title">Duração média por Género</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
+        <!-- Placeholders for 3-10 -->
+        {% for i in range(3, 11) %}
+        <li class="disabled">
+          <a href="#">
+            <span class="query-number">{{ "%02d"|format(i) }}</span>
+            <span class="query-title">Consulta SQL {{ i }} (Brevemente)</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
 {% endblock %}
