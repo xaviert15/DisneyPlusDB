@@ -14,27 +14,51 @@ def index():
 # Catálogo Completo
 @APP.route('/show/')
 def show_all():
-    return render_template('show_all.html')
+    shows = db.execute('''
+        SELECT * FROM
+        Show
+        ''').fetchall()
+    return render_template('show_all.html', shows=shows)
 
 # Atores e Diretores
 @APP.route('/persons/')
 def show_persons():
-    return render_template('show_persons.html')
+    persons = db.execute('''
+        SELECT p.name, p.person_id, COUNT(c.show_id) as participacoes FROM
+        Person AS p
+        LEFT JOIN Credit AS c ON p.person_id=c.person_id
+        GROUP BY p.person_id
+        ''').fetchall()
+    return render_template('show_persons.html', persons=persons)
 
 # Géneros
 @APP.route('/genre/')
 def show_genre():
-    return render_template('show_genre.html')
+    genres = db.execute('''
+        SELECT * FROM
+        Genre
+    ''').fetchall()
+    return render_template('show_genre.html', genres=genres)
 
 # Países
 @APP.route('/country/')
 def show_country():
-    return render_template('show_country.html')
+    countries = db.execute('''
+        SELECT c.country_id, c.name, COUNT(sc.show_id) as counter FROM
+        Country AS c
+        LEFT JOIN show_country as sc ON c.country_id=sc.country_id
+        GROUP BY c.country_id
+        ''').fetchall()
+    return render_template('show_country.html', countries=countries)
 
 # Ratings
 @APP.route('/rating/')
 def show_rating():
-    return render_template('show_rating.html')
+    ratings = db.execute('''
+        SELECT * FROM
+        Rating
+        ''').fetchall()
+    return render_template('show_rating.html', ratings=ratings)
 
 # Queries (Placeholders)
 @APP.route('/queries/top-actors')
