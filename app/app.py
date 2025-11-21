@@ -15,8 +15,11 @@ def index():
 @APP.route('/show/')
 def show_all():
     shows = db.execute('''
-        SELECT * FROM
-        Show
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name FROM
+        Show as s
+        LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+        LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+        GROUP BY s.show_id
         ''').fetchall()
     return render_template('show_all.html', shows=shows)
 
@@ -35,8 +38,10 @@ def show_persons():
 @APP.route('/genre/')
 def show_genre():
     genres = db.execute('''
-        SELECT * FROM
-        Genre
+        SELECT g.genre_id, g.name, COUNT(sg.show_id) as counter FROM
+        Genre as g
+        LEFT JOIN show_genre as sg on g.genre_id=sg.genre_id
+        GROUP BY g.genre_id
     ''').fetchall()
     return render_template('show_genre.html', genres=genres)
 
@@ -55,8 +60,10 @@ def show_country():
 @APP.route('/rating/')
 def show_rating():
     ratings = db.execute('''
-        SELECT * FROM
-        Rating
+        SELECT r.rating_id, r.code, COUNT(s.show_id) as counter FROM
+        Rating as R
+        LEFT JOIN Show as s ON r.rating_id = s.rating_id
+        GROUP BY r.rating_id
         ''').fetchall()
     return render_template('show_rating.html', ratings=ratings)
 

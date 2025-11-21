@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="zone-header">
-  <h2>Classificações</h2>
-  <p>Lista de Ratings e Avaliações registados na base de dados.</p>
+  <h2>Catálogo</h2>
+  <p>Lista dos filmes e séries registados na base de dados.</p>
 </div>
 
 <div class="table-container">
@@ -11,14 +11,26 @@
     <thead>
       <tr>
         <th class="col-id">ID</th>
-        <th class="col-name">Código</th>
+        <th class="col-name">Título</th>
+        <th class="col-type">Tipo</th>
+        <th class="col-genre">Género</th>
+        <th class="col-desc">Descrição</th>
+        <th class="col-rdate">Ano de Realização</th>
+        <th class="col-adate">Disponível desde</th>
+        <th class="col-dur">Duração</th>
       </tr>
     </thead>
     <tbody>
-      {% for r in ratings %}
+      {% for s in shows %}
       <tr>
-        <td class="col-id">#{{ r.rating_id }}</td>
-        <td class="col-name">{{ r.code }}</td>
+        <td class="col-id">#{{ s.show_id }}</td>
+        <td class="col-name">{{ s.title }}</td>
+        <td class="col-type">{{ s.show_type }}</td>
+        <td class="col-genre">{{ s.genre_name }}</td>
+        <td class="col-desc">{{ s.description }}</td>
+        <td class="col-rdate">{{ s.release_date[:4] }}</td>
+        <td class="col-adate">{{ s.date_added }}</td>
+        <td class="col-dur">{{ s.duration_value }} {{s.duration_unit}}</td>
       </tr>
       {% endfor %}
     </tbody>
