@@ -2,241 +2,91 @@
 
 {% block content %}
 
-<div class="movie-header">
-    <div class="d-flex justify-content-between align-items-start">
-        <div>
-            <h1>{{ show.title }}</h1>
-            <div class="meta-badges">
-                {% if show.show_type == 'Movie' %}
+<div class="zone-card movie-details">
+    <div class="movie-header">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1>{{ show.title }}</h1>
+                <div class="meta-badges">
+                    {% if show.show_type == 'Movie' %}
                     <a href="/movies/" class="badge-type">{{ show.show_type }}</a>
-                {% else %}
+                    {% else %}
                     <a href="/tvshows/" class="badge-type">{{ show.show_type }}</a>
-                {% endif %}
+                    {% endif %}
 
-                {% if show.rating_code %}
+                    {% if show.rating_code %}
                     <a href="/rating/{{ show.rating_id }}/" class="badge-rating">{{ show.rating_code }}</a>
+                    {% endif %}
+
+                    <span class="duration">
+                        <i class="bi bi-clock"></i> {{ show.duration_value }} {{ show.duration_unit }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="movie-content">
+        <div class="section">
+            <h3>Sinopse</h3>
+            <p class="description">{{ show.description }}</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-col">
+                <div class="info-item">
+                    <strong>Ano de lançamento:</strong>
+                    <a href="/year/{{ show.release_date[:4] }}/">{{ show.release_date[:4] }}</a>
+                </div>
+                <div class="info-item">
+                    <strong>Adicionado em:</strong> {{ show.date_added }}
+                </div>
+
+                <div class="info-item">
+                    <strong>Géneros:</strong>
+                    <div class="tags-list">
+                        {% for g in genres %}
+                        <a href="/genre/{{ g.genre_id }}/" class="tag-link">{{ g.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if countries %}
+                <div class="info-item">
+                    <strong>País:</strong>
+                    <div class="tags-list">
+                        {% for c in countries %}
+                        <a href="/country/{{ c.country_id }}/" class="tag-link">{{ c.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="info-col">
+                {% if directors %}
+                <div class="info-item">
+                    <strong>Direção:</strong>
+                    <ul class="person-list">
+                        {% for d in directors %}
+                        <li><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
 
-                <span class="duration">
-                    <i class="bi bi-clock"></i> {{ show.duration_value }} {{ show.duration_unit }}
-                </span>
+                {% if actors %}
+                <div class="info-item">
+                    <strong>Elenco Principal:</strong>
+                    <ul class="person-list">
+                        {% for a in actors %}
+                        <li><a href="/person/{{ a.person_id }}/">{{ a.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
-<div class="movie-content">
-    <div class="section">
-        <h3>Sinopse</h3>
-        <p class="description">{{ show.description }}</p>
-    </div>
-
-    <div class="info-grid">
-        <div class="info-col">
-            <div class="info-item">
-                <strong>Ano de lançamento:</strong> 
-                <a href="/year/{{ show.release_date[:4] }}/">{{ show.release_date[:4] }}</a>
-            </div>
-            <div class="info-item">
-                <strong>Adicionado em:</strong> {{ show.date_added }}
-            </div>
-            
-            <div class="info-item">
-                <strong>Géneros:</strong>
-                <div class="tags-list">
-                    {% for g in genres %}
-                        <a href="/genre/{{ g.genre_id }}/" class="tag-link">{{ g.name }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            {% if countries %}
-            <div class="info-item">
-                <strong>País:</strong>
-                <div class="tags-list">
-                    {% for c in countries %}
-                        <a href="/country/{{ c.country_id }}/" class="tag-link">{{ c.name }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="info-col">
-            {% if directors %}
-            <div class="info-item">
-                <strong>Direção:</strong>
-                <ul class="person-list">
-                    {% for d in directors %}
-                    <li><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
-            {% if actors %}
-            <div class="info-item">
-                <strong>Elenco Principal:</strong>
-                <ul class="person-list">
-                    {% for a in actors %}
-                    <li><a href="/person/{{ a.person_id }}/">{{ a.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<style>
-    /* Cabeçalho */
-    .movie-header {
-        margin-bottom: 2rem;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 1rem;
-    }
-    .movie-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        color: var(--text-primary);
-    }
-    
-    /* Badges e Etiquetas */
-    .meta-badges {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        font-size: 1rem;
-    }
-
-    /* Badge Tipo (Movie/TV Show) */
-    .badge-type {
-        background-color: #0063e5; /* Disney Blue */
-        color: white;
-        padding: 0.2rem 0.6rem;
-        border-radius: 4px;
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        text-decoration: none; /* Remove sublinhado do link */
-        transition: opacity 0.2s; /* Suaviza o hover */
-    }
-    
-    .badge-type:hover {
-        opacity: 0.8; /* Fica ligeiramente transparente ao passar o rato */
-        color: white;
-    }
-
-    /* Badge Rating */
-    .badge-rating {
-        border: 1px solid var(--text-secondary);
-        color: var(--text-secondary);
-        padding: 0.2rem 0.5rem;
-        border-radius: 2px;
-        font-size: 0.8rem;
-        text-decoration: none; /* Remove sublinhado do link */
-        transition: all 0.2s;
-    }
-
-    .badge-rating:hover {
-        border-color: #61dafb; /* Muda a borda para azul ao passar o rato */
-        color: #61dafb;        /* Muda o texto para azul */
-    }
-
-    .duration {
-        color: var(--text-secondary);
-    }
-
-    /* Descrição */
-    .description {
-        font-size: 1.1rem;
-        line-height: 1.6;
-        color: #e1e1e1;
-        max-width: 800px;
-    }
-
-    /* Grid de Informação */
-    .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        margin-top: 2rem;
-    }
-    
-    .info-item {
-        margin-bottom: 1.5rem;
-    }
-    .info-item strong {
-        display: block;
-        color: var(--text-secondary);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-    }
-
-    /* --- NOVO BLOCO CSS --- */
-    /* Estilo para links soltos na info (como o Ano) */
-    /* O sinal '>' garante que só afeta o link direto e não os botões tags */
-    .info-item > a {
-        color: var(--text-primary);
-        text-decoration: none;
-        border-bottom: 1px solid transparent; /* Linha invisível para não "saltar" */
-        transition: border-color 0.2s;
-    }
-
-    .info-item > a:hover {
-        border-bottom: 1px solid #61dafb; /* A linha azul ao passar o rato */
-    }
-    /* --------------------- */
-
-    /* Tags (Links de Género e País) */
-    .tags-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    .tag-link {
-        background-color: rgba(255,255,255,0.1);
-        color: var(--text-primary);
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: background 0.2s;
-    }
-    .tag-link:hover {
-        background-color: #61dafb;
-        color: #1a1a1a;
-    }
-
-    /* Listas de Pessoas */
-    .person-list {
-        list-style: none;
-        padding: 0;
-    }
-    .person-list li {
-        margin-bottom: 0.3rem;
-    }
-    .person-list a {
-        color: var(--text-primary);
-        text-decoration: none;
-        border-bottom: 1px solid transparent;
-    }
-    .person-list a:hover {
-        border-bottom: 1px solid #61dafb;
-    }
-
-    .btn-back {
-        color: var(--text-secondary);
-        text-decoration: none;
-        border: 1px solid var(--border-color);
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-    }
-    .btn-back:hover {
-        border-color: var(--text-primary);
-        color: var(--text-primary);
-    }
-</style>
 
 {% endblock %}

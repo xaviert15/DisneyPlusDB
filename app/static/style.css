@@ -4,7 +4,8 @@
     --bg-card: #252830;
     --text-primary: #f9f9f9;
     --text-secondary: #a0a0a0;
-    --accent-color: #0063e5; /* Disney+ Blue-ish */
+    --accent-color: #0063e5;
+    /* Disney+ Blue-ish */
     --accent-hover: #0483ee;
     --border-color: #3a3d45;
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -108,6 +109,7 @@ ul {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
     background: linear-gradient(to right, #fff, #a0a0a0);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -134,6 +136,11 @@ ul {
     border-radius: 12px;
     padding: 1.5rem;
     border: 1px solid var(--border-color);
+}
+
+.zone-card.movie-details {
+    background-color: #16181d;
+    /* Slightly different from default bg-secondary */
 }
 
 .zone-header {
@@ -233,4 +240,168 @@ ul {
 .arrow {
     color: var(--text-secondary);
     font-size: 1.2rem;
+}
+
+/* Show Page */
+.movie-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.movie-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+/* Badges e Etiquetas */
+.meta-badges {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 1rem;
+}
+
+/* Badge Tipo (Movie/TV Show) */
+.badge-type {
+    background-color: #0063e5;
+    /* Disney Blue */
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    text-decoration: none;
+    /* Remove sublinhado do link */
+    transition: opacity 0.2s;
+    /* Suaviza o hover */
+}
+
+.badge-type:hover {
+    opacity: 0.8;
+    /* Fica ligeiramente transparente ao passar o rato */
+    color: white;
+}
+
+/* Badge Rating */
+.badge-rating {
+    border: 1px solid var(--text-secondary);
+    color: var(--text-secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    /* Remove sublinhado do link */
+    transition: all 0.2s;
+}
+
+.badge-rating:hover {
+    border-color: #61dafb;
+    /* Muda a borda para azul ao passar o rato */
+    color: #61dafb;
+    /* Muda o texto para azul */
+}
+
+.duration {
+    color: var(--text-secondary);
+}
+
+/* Descrição */
+.description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #e1e1e1;
+    max-width: 800px;
+}
+
+/* Grid de Informação */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 2rem;
+}
+
+.info-item {
+    margin-bottom: 1.5rem;
+}
+
+.info-item strong {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* Estilo para links soltos na info (como o Ano) */
+.info-item>a {
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    /* Linha invisível para não "saltar" */
+    transition: border-color 0.2s;
+}
+
+.info-item>a:hover {
+    border-bottom: 1px solid #61dafb;
+    /* A linha azul ao passar o rato */
+}
+
+/* Tags (Links de Género e País) */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-link {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.tag-link:hover {
+    background-color: #61dafb;
+    color: #1a1a1a;
+}
+
+/* Listas de Pessoas */
+.person-list {
+    list-style: none;
+    padding: 0;
+}
+
+.person-list li {
+    margin-bottom: 0.3rem;
+}
+
+.person-list a {
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.person-list a:hover {
+    border-bottom: 1px solid #61dafb;
+}
+
+.btn-back {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.btn-back:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
 }
