@@ -243,7 +243,10 @@ def show(id):
 # Queries (Placeholders)
 @APP.route('/queries/top-actors')
 def top_actors():
-    return "Top 5 Atores (TODO)"
+    topActors = db.execute('''
+    select p.name, count(show_id) NumberOfMovies, p.person_id personID from person p join credit c on p.person_id = c.person_id where c.role = 'Actor' group by c.person_id order by NumberOfMovies desc limit 5
+    ''')
+    return render_template('top_Actors.html', topActors=topActors)
 
 @APP.route('/queries/avg-duration')
 def avg_duration():
