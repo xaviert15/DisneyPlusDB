@@ -4,7 +4,7 @@ import os
 import math
 
 # --- CONFIGURAÇÃO ---
-DB_NAME = "DisneyDBge.db"
+DB_NAME = "DisneyDB.db"
 DATA_FILE = "DisneyPlus.xlsx" 
 SCHEMA_FILE = "schema.sql"
 
@@ -43,7 +43,7 @@ def main():
     # 1. PREPARAÇÃO DA BASE DE DADOS
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
-        print(f"Base de dados antiga removida para reiniciar limpo.")
+        print(f"Base de dados antiga removida para reiniciar.")
         
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -68,8 +68,6 @@ def main():
     # Substituir NaN por None
     df = df.where(pd.notnull(df), None)
     
-    # --- ALTERAÇÃO CRÍTICA: FORMATO DE DATAS ---
-    print("A converter datas (Formato MM/DD/YYYY)...")
     # Forçamos o formato '%m/%d/%Y' para garantir que 11/26/2021 é lido corretamente
     # errors='coerce' transforma datas inválidas em NaT (None) sem parar o script
     df['date_added_clean'] = pd.to_datetime(df['date_added'], format='%m/%d/%Y', errors='coerce').dt.strftime('%Y-%m-%d')
