@@ -19,7 +19,7 @@
       {% for p in persons %}
       <tr>
         <td class="col-id">#{{ p.person_id }}</td>
-        <td class="col-name">{{ p.name }}</td>
+        <td class="col-name"> <a href="/person/{{ p.person_id }}/">{{ p.name }}</a> </td>
         <td class="col-participacoes">{{ p.participacoes }}</td>
       </tr>
       {% endfor %}
@@ -79,6 +79,19 @@
   .col-name {
     font-weight: 500;
     color: var(--text-primary);
+  }
+
+  .col-name a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+  }
+
+  .col-name a:hover {
+    color: #61dafb;
+    text-decoration: underline;
+    cursor: pointer;
   }
 </style>
 

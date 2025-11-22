@@ -60,6 +60,25 @@ def show_persons():
         ''').fetchall()
     return render_template('show_persons.html', persons=persons)
 
+@APP.route('/person/<int:code>/')
+def person(code):
+    person = db.execute('''
+        SELECT * FROM
+        Person
+        WHERE person_id = ?
+    ''', [code]).fetchone()
+    shows = db.execute('''
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, c.role as role_name FROM
+        Show as s
+        LEFT JOIN credit AS c ON s.show_id=c.show_id
+        LEFT JOIN person AS p ON c.person_id=p.person_id
+        LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+        LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+        WHERE c.person_id=?
+        GROUP BY s.show_id
+    ''', [code]).fetchall()
+    return render_template('person.html', person=person, shows=shows)
+
 # Géneros
 @APP.route('/genre/')
 def show_genre():
