@@ -6,6 +6,13 @@
   <p>Lista dos filmes e séries registados na base de dados.</p>
 </div>
 
+<div class="search-bar" style="margin: 20px 0;">
+  <form action="/show/" method="get">
+    <input class="filter-search" type="text" name="search" placeholder="Search by title or description...">
+    <button class="filter-search-button" type="submit">Search</button>
+  </form>
+</div>
+
 <div class="table-container">
   <table class="styled-table">
     <thead>
@@ -44,6 +51,23 @@
 </div>
 
 <style>
+
+  .filter-search {
+    padding: 8px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .filter-search-button {
+    padding: 8px;
+    width: 100%;
+    max-width: 80px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
   .table-container {
     overflow-x: auto;
     border-radius: 8px;

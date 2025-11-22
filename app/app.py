@@ -1,6 +1,6 @@
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
-from flask import render_template, Flask
+from flask import render_template, Flask, request
 import logging
 import db
 
@@ -14,13 +14,24 @@ def index():
 # Catálogo Completo
 @APP.route('/show/')
 def show_all():
-    shows = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
-        Show as s
-        LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
-        LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
-        GROUP BY s.show_id
-        ''').fetchall()
+    search = request.args.get('search')
+    if search:
+        shows = db.execute('''
+            SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
+            Show as s
+            LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+            LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+            WHERE s.title LIKE ? OR s.description LIKE ?
+            GROUP BY s.show_id
+            ''', [f'%{search}%', f'%{search}%']).fetchall()
+    else:
+        shows = db.execute('''
+            SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
+            Show as s
+            LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+            LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+            GROUP BY s.show_id
+            ''').fetchall()
     return render_template('show_all.html', shows=shows)
 
 # Filmes
