@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="zone-header">
-    <h2>{{ year }}</h2>
-    <p>Lista de filmes e séries realizados neste ano.</p>
+    <h1>{{ year }}</h1>
+    <p>Lista de filmes e séries lançados neste ano.</p>
 </div>
 
 <div class="table-container">
@@ -23,7 +23,7 @@
             {% for s in shows %}
             <tr>
                 <td class="col-id">#{{ s.show_id }}</td>
-                <td class="col-name">{{ s.title }}</td>
+                <td class="col-name"> <a href="/show/{{ s.show_id }}/">{{ s.title }}</a> </td>
                 <td class="col-type">
                     {% if s.show_type == 'Movie' %}
                         <a href="/movies/">{{ s.show_type }}</a>
@@ -95,14 +95,14 @@
         color: var(--text-primary);
     }
 
-    .col-type a, .col-genre a {
+    .col-name a, .col-type a, .col-genre a {
         color: inherit;
         text-decoration: none;
         font-weight: bold;
         transition: color 0.2s;
     }
 
-    .col-type a:hover, .col-genre a:hover {
+    .col-name a:hover, .col-type a:hover, .col-genre a:hover {
         color: #61dafb;
         text-decoration: underline;
     }

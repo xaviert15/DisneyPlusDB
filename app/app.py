@@ -163,6 +163,53 @@ def year(code):
     ''', [year_str]).fetchall()
     return render_template('year.html', year=code, shows=shows)
 
+# Show (Movie + TV Show)
+@APP.route('/show/<int:id>/')
+def show(id):
+    # 1. Informação Principal do Filme + Rating
+    show = db.execute('''
+        SELECT s.*, r.code as rating_code
+        FROM Show s
+        LEFT JOIN Rating r ON s.rating_id = r.rating_id
+        WHERE s.show_id = ?
+    ''', [id]).fetchone()
+
+    if not show:
+        return "Filme não encontrado", 404
+
+    # 2. Buscar Géneros
+    genres = db.execute('''
+        SELECT g.genre_id, g.name 
+        FROM Genre g
+        JOIN Show_Genre sg ON g.genre_id = sg.genre_id
+        WHERE sg.show_id = ?
+    ''', [id]).fetchall()
+
+    # 3. Buscar Países
+    countries = db.execute('''
+        SELECT c.country_id, c.name 
+        FROM Country c
+        JOIN Show_Country sc ON c.country_id = sc.country_id
+        WHERE sc.show_id = ?
+    ''', [id]).fetchall()
+
+    # 4. Buscar Elenco e Diretores (Tudo junto e separamos no Python)
+    credits = db.execute('''
+        SELECT p.person_id, p.name, c.role
+        FROM Person p
+        JOIN Credit c ON p.person_id = c.person_id
+        WHERE c.show_id = ?
+        ORDER BY p.name
+    ''', [id]).fetchall()
+    actors = [p for p in credits if p['role'] == 'Actor']
+    directors = [p for p in credits if p['role'] == 'Director']
+    return render_template('show.html', 
+                           show=show, 
+                           genres=genres, 
+                           countries=countries, 
+                           actors=actors, 
+                           directors=directors)
+
 # Queries (Placeholders)
 @APP.route('/queries/top-actors')
 def top_actors():

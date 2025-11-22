@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="zone-header">
-  <h2>Filmes</h2>
+  <h1>Filmes</h1>
   <p>Lista de Filmes registados na base de dados.</p>
 </div>
 
@@ -14,7 +14,7 @@
         <th class="col-name">Título</th>
         <th class="col-genre">Género</th>
         <th class="col-desc">Descrição</th>
-        <th class="col-rdate">Ano de Realização</th>
+        <th class="col-rdate">Ano de Lançamento</th>
         <th class="col-adate">Disponível desde</th>
         <th class="col-dur">Duração</th>
       </tr>
@@ -23,7 +23,7 @@
       {% for m in movies %}
       <tr>
         <td class="col-id">#{{ m.show_id }}</td>
-        <td class="col-name">{{ m.title }}</td>
+        <td class="col-name"> <a href="/show/{{ m.show_id }}/">{{ m.title }}</a> </td>
         <td class="col-genre"> <a href="/genre/{{ m.genre_id }}/">{{ m.genre_name }}</a> </td>
         <td class="col-desc">{{ m.description }}</td>
         <td class="col-rdate"> <a href="/year/{{ m.release_date[:4] }}/">{{ m.release_date[:4] }}</a> </td>
@@ -89,14 +89,14 @@
     color: var(--text-primary);
   }
 
-  .col-type a, .col-genre a , .col-rdate a{
+  .col-name a, .col-type a, .col-genre a , .col-rdate a{
     color: inherit;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.2s;
   }
 
-  .col-type a:hover, .col-genre a:hover, .col-rdate a:hover {
+  .col-name a:hover, .col-type a:hover, .col-genre a:hover, .col-rdate a:hover {
     color: #61dafb;
     text-decoration: underline;
     cursor: pointer;

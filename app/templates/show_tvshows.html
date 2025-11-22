@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="zone-header">
-  <h2>TV Shows</h2>
+  <h1>TV Shows</h1>
   <p>Lista de TV Shows registados na base de dados.</p>
 </div>
 
@@ -14,7 +14,7 @@
         <th class="col-name">Título</th>
         <th class="col-genre">Género</th>
         <th class="col-desc">Descrição</th>
-        <th class="col-rdate">Ano de Realização</th>
+        <th class="col-rdate">Ano de Lançamento</th>
         <th class="col-adate">Disponível desde</th>
         <th class="col-dur">Duração</th>
       </tr>
@@ -23,7 +23,7 @@
       {% for t in tvshows %}
       <tr>
         <td class="col-id">#{{ t.show_id }}</td>
-        <td class="col-name">{{ t.title }}</td>
+        <td class="col-name"> <a href="/show/{{ t.show_id }}/">{{ t.title }}</a> </td>
         <td class="col-genre"> <a href="/genre/{{ t.genre_id }}/">{{ t.genre_name }}</a> </td>
         <td class="col-desc">{{ t.description }}</td>
         <td class="col-rdate"> <a href="/year/{{ t.release_date[:4] }}/">{{ t.release_date[:4] }}</a> </td>
@@ -89,14 +89,14 @@
     color: var(--text-primary);
   }
 
-  .col-type a, .col-genre a , .col-rdate a{
+  .col-name a, .col-type a, .col-genre a , .col-rdate a{
     color: inherit;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.2s;
   }
 
-  .col-type a:hover, .col-genre a:hover, .col-rdate a:hover {
+  .col-name a:hover, .col-type a:hover, .col-genre a:hover, .col-rdate a:hover {
     color: #61dafb;
     text-decoration: underline;
     cursor: pointer;
