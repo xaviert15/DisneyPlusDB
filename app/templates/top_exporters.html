@@ -11,18 +11,18 @@
     <thead>
       <tr>
         <th class="col-rank">#</th>
-        <th class="col-country">País</th>
+        <th class="col-country"><a href="/country/">País</a></th>
         <th class="col-visual">Distribuição (Filmes vs Séries)</th>
-        <th class="col-num">Filmes</th>
-        <th class="col-num">Séries</th>
+        <th class="col-num"><a href="/movies/">Filmes</a></th>
+        <th class="col-num"><a href="/tvshows/">Séries</a></th>
         <th class="col-total">Total</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td class="col-rank">0</td>
+        <td class="col-rank">-</td>
         <td class="col-country">
-            Global
+            <a href="/show/">Global</a>
         </td>
         
         <td class="col-visual">
@@ -89,12 +89,12 @@
   .styled-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.03); }
 
   .col-rank { width: 5%; text-align: center; color: var(--text-secondary); }
-  .col-country { width: 20%; font-weight: bold; }
-  .col-country a { color: var(--text-primary); text-decoration: none; }
-  .col-country a:hover { color: #61dafb; text-decoration: underline; }
+  .col-country{ width: 20%; font-weight: bold; }
+  .col-country a, .col-num a{ color: var(--text-primary); text-decoration: none; }
+  .col-country a:hover , .col-num a:hover{ color: #61dafb; text-decoration: underline; }
   
   .col-num { width: 10%; text-align: right; font-family: monospace; }
-  .col-total { width: 10%; text-align: right; font-weight: 500; color: #fff; }
+  .col-total { width: 10%; text-align: right; color: #fff; }
   
   .movie-text { color: #0063e5; }
   .tv-text { color: #888; }
