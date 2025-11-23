@@ -8,7 +8,6 @@
   </section>
 
   <div class="dashboard-grid">
-    <!-- Zone A: Data Exploration -->
     <section class="zone-card exploration-zone">
       <div class="zone-header">
         <h2>Exploração de Dados</h2>
@@ -74,8 +73,14 @@
             <span class="arrow">→</span>
           </a>
         </li>
-        <!-- Placeholders for 3-10 -->
-        {% for i in range(3, 11) %}
+        <li>
+          <a href="/queries/topExporters">
+            <span class="query-number">03</span>
+            <span class="query-title">Top Exportadores de Conteúdo</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
+        {% for i in range(4, 11) %}
         <li class="disabled">
           <a href="#">
             <span class="query-number">{{ "%02d"|format(i) }}</span>
