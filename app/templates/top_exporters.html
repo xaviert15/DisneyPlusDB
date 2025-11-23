@@ -19,6 +19,23 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td class="col-rank">0</td>
+        <td class="col-country">
+            Global
+        </td>
+        
+        <td class="col-visual">
+            <div class="distribution-bar">
+                {% set movie_pct = (exporters_total.total_movies / exporters_total.total_content) * 100 %}
+                <div class="bar-movie" style="width: {{ movie_pct }}%;"></div>
+            </div>
+        </td>
+
+        <td class="col-num movie-text">{{ exporters_total.total_movies }}</td>
+        <td class="col-num tv-text">{{ exporters_total.total_tv }}</td>
+        <td class="col-total">{{ exporters_total.total_content }}</td>
+      </tr>
       {% for e in exporters %}
       <tr>
         <td class="col-rank">{{ loop.index }}</td>

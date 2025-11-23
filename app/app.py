@@ -282,4 +282,11 @@ def top_exporters():
         ORDER BY total_content DESC
         LIMIT 20
     ''').fetchall()
-    return render_template('top_exporters.html', exporters=exporters)
+    exporters_total = db.execute('''
+        SELECT SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies, SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tv, COUNT(s.show_id) AS total_content
+        FROM Country c
+        JOIN Show_Country sc ON c.country_id = sc.country_id
+        JOIN Show s ON sc.show_id = s.show_id
+        ORDER BY total_content DESC
+    ''').fetchone()
+    return render_template('top_exporters.html', exporters=exporters, exporters_total=exporters_total)
