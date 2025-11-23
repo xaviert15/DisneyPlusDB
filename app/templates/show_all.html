@@ -17,14 +17,14 @@
   <table class="styled-table">
     <thead>
       <tr>
-        <th class="col-id"><a href="{{ url_for(request.endpoint, **dict(request.args, order='show_id')) }}">ID</a></th>
+        <th class="col-id"><a href="{{ url_for(request.endpoint, **dict(request.args, order='show_id', direction='desc' if order == 'show_id' and direction == 'asc' else 'asc')) }}">ID</a></th>
         <th class="col-name">Título</th>
         <th class="col-type"></a>Tipo</th>
         <th class="col-genre"></a>Género</th>
         <th class="col-desc">Descrição</th>
-        <th class="col-rdate-c"><a href="{{ url_for(request.endpoint, **dict(request.args, order='release_date')) }}">Ano de Lançamento</a></th>
-        <th class="col-adate"><a href="{{ url_for(request.endpoint, **dict(request.args, order='date_added')) }}">Disponível desde</a></th>
-        <th class="col-dur"><a href="{{ url_for(request.endpoint, **dict(request.args, order='duration_value')) }}">Duração</a></th>
+        <th class="col-rdate-c"><a href="{{ url_for(request.endpoint, **dict(request.args, order='release_date', direction='desc' if order == 'release_date' and direction == 'asc' else 'asc')) }}">Ano de Lançamento</a></th>
+        <th class="col-adate"><a href="{{ url_for(request.endpoint, **dict(request.args, order='date_added', direction='desc' if order == 'date_added' and direction == 'asc' else 'asc')) }}">Disponível desde</a></th>
+        <th class="col-dur"><a href="{{ url_for(request.endpoint, **dict(request.args, order='duration_value', direction='desc' if order == 'duration_value' and direction == 'asc' else 'asc')) }}">Duração</a></th>
       </tr>
     </thead>
     <tbody>

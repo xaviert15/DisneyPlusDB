@@ -16,9 +16,12 @@ def index():
 def show_all():
     search = request.args.get('search')
     order = request.args.get('order')
+    direction = request.args.get('direction', 'asc')
     possible_order = ['show_id', 'duration_value', 'release_date', 'date_added']
     if order not in possible_order:
         order = 'show_id'
+    if direction not in ['asc', 'desc']:
+        direction = 'asc'
     if search:
         shows = db.execute(f'''
             SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
@@ -27,7 +30,7 @@ def show_all():
             LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
             WHERE s.title LIKE ? OR s.description LIKE ?
             GROUP BY s.show_id
-            ORDER BY s.{order}
+            ORDER BY s.{order} {direction}
             ''', [f'%{search}%', f'%{search}%']).fetchall()
     else:
         shows = db.execute(f'''
@@ -36,9 +39,9 @@ def show_all():
             LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
             LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
             GROUP BY s.show_id
-            ORDER BY s.{order}
+            ORDER BY s.{order} {direction}
             ''').fetchall()
-    return render_template('show_all.html', shows=shows)
+    return render_template('show_all.html', shows=shows, order=order, direction=direction)
 
 # Filmes
 @APP.route('/movies/')
