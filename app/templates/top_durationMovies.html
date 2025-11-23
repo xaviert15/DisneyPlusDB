@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="zone-header">
+  <h1>Top 3 Filmes Mais Longos por Género</h1>
+  <p>Ranking dos filmes com maior duração em cada categoria.</p>
+</div>
+
+<div class="table-container">
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th class="col-rank">#</th> <th class="col-title">Título</th>
+        <th class="col-dur">Duração</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in topDurationMovies %}
+      
+      {% if loop.changed(g.genrename) %}
+      <tr class="genre-header-row">
+        <td colspan="3">
+            <a href="/genre/{{ g.genreID }}/" class="genre-link">
+                <i class="bi bi-tag-fill"></i> {{ g.genrename }}
+            </a>
+        </td>
+      </tr>
+      {% endif %}
+
+      <tr>
+        <td class="col-rank">
+            <span class="badge-rank rank-{{ g.rank }}">{{ g.rank }}</span>
+        </td>
+        <td class="col-title"> 
+            <a href="/show/{{ g.showID }}/">{{ g.movietitle }}</a>
+        </td>
+        <td class="col-dur">{{ g.duration_value }} {{g.duration_unit}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 0.8rem 1.5rem;
+  }
+
+  .styled-table thead tr {
+    background-color: #2c3039;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .genre-header-row {
+      background-color: rgba(255, 255, 255, 0.08); /* Um pouco mais claro que o fundo */
+      border-bottom: 1px solid var(--border-color);
+  }
+  
+  .genre-link {
+      color: #61dafb; 
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      font-size: 0.9rem;
+  }
+  
+  .genre-link:hover {
+      text-decoration: underline;
+      color: #fff;
+  }
+
+  .styled-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+  }
+  
+  .styled-table tbody tr:not(.genre-header-row):hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .col-rank {
+      width: 10%;
+      text-align: center;
+      color: var(--text-secondary);
+  }
+
+  .col-title {
+      width: 60%;
+  }
+
+  .col-dur {
+      width: 30%;
+      text-align: right;
+      font-family: monospace;
+      color: var(--text-secondary);
+  }
+
+  /* Estilo dos Links */
+  .col-title a {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+  .col-title a:hover {
+        color: #61dafb;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .badge-rank {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        border-radius: 50%;
+        background-color: rgba(255,255,255,0.1);
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    .rank-1 {
+        background-color: #ffd700;
+        color: #000;
+    }
+</style>
+
+{% endblock %}
