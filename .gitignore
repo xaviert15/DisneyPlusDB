@@ -3,3 +3,4 @@ pyproject.toml
 uv.lock
 .venv
 /app/__pycache__
+.vscode

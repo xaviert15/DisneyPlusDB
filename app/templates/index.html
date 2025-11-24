@@ -80,7 +80,14 @@
             <span class="arrow">→</span>
           </a>
         </li>
-        {% for i in range(4, 11) %}
+        <li>
+          <a href="/queries/avgGenreDuration">
+            <span class="query-number">04</span>
+            <span class="query-title">Duração Média de Géneros</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
+        {% for i in range(5, 11) %}
         <li class="disabled">
           <a href="#">
             <span class="query-number">{{ "%02d"|format(i) }}</span>
