@@ -299,7 +299,7 @@ def avg_durationMovies():
     avgShowGenreDuration = db.execute('''
         select name, show_type, genre_id, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by genre_id, show_type order by show_type, avg desc
     ''').fetchall()
-    avgDuration = db.execute('''
-        select show_type, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by show_type
-    ''')
-    return render_template('avg_durationShows.html', avgShowGenreDuration=avgShowGenreDuration, avgDuration=avgDuration)
+    avgMovieDuration, avgTVDuration = db.execute('''
+        select show_type, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by show_type order by show_type
+    ''').fetchmany(2)
+    return render_template('avg_durationShows.html', avgShowGenreDuration=avgShowGenreDuration, avgTVDuration=avgTVDuration, avgMovieDuration=avgMovieDuration)

@@ -16,19 +16,16 @@
       </tr>
     </thead>
     <tbody>
-      {% for g in avgDuration %}
       <tr>
-        <td class="col-type">
-        {% if g.show_type == 'Movie' %}
-            <a href="/movies/">{{ g.show_type }}</a>
-        {% else %}
-            <a href="/tvshows/">{{ g.show_type }}</a>
-        {% endif %}
-        </td>
+        <td class="col-type"><a href="/tvshows/">TV Show</a></td>
         <td class="col-genre">ALL</td>
-        <td class="col-dur">{{ g.avg }} {{ g.duration_unit }}</td>
+        <td class="col-dur">{{ avgTVDuration.avg }} Seasons</td>
       </tr>
-      {% endfor %}
+      <tr>
+        <td class="col-type"><a href="/movies/">Movie</a></td>
+        <td class="col-genre">ALL</td>
+        <td class="col-dur">{{ avgMovieDuration.avg }} min</td>
+      </tr>
       {% for g in avgShowGenreDuration %}
       <tr>
         <td class="col-type">
