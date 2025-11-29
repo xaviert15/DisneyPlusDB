@@ -88,7 +88,7 @@ def person(code):
         WHERE person_id = ?
     ''', [code]).fetchone()
     shows = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, c.role as role_name FROM
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id, GROUP_CONCAT(DISTINCT c.role) as role_name FROM
         Show as s
         LEFT JOIN credit AS c ON s.show_id=c.show_id
         LEFT JOIN person AS p ON c.person_id=p.person_id
@@ -303,3 +303,17 @@ def avg_durationMovies():
         select show_type, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by show_type order by show_type
     ''').fetchmany(2)
     return render_template('avg_durationShows.html', avgShowGenreDuration=avgShowGenreDuration, avgTVDuration=avgTVDuration, avgMovieDuration=avgMovieDuration)
+
+@APP.route('/queries/actorsdirectors')
+def actors_directors():
+    actorsdirectors = db.execute('''
+    SELECT 
+            p.person_id, p.name, SUM(CASE WHEN c.role = 'Actor' THEN 1 ELSE 0 END) as count_actor, SUM(CASE WHEN c.role = 'Director' THEN 1 ELSE 0 END) as count_director, COUNT(DISTINCT c.show_id) as total_shows
+        FROM Person p
+        JOIN Credit c ON p.person_id = c.person_id
+        GROUP BY p.person_id
+        HAVING count_actor > 0 AND count_director > 0
+        ORDER BY total_shows DESC
+    ''').fetchall()
+    return render_template('actors_directors.html', actorsdirectors=actorsdirectors)
+    
