@@ -1,0 +1,85 @@
+{% extends "layout.html" %} {% block content %}
+<div class="zone-header">
+  <h1>Lançamentos Mensais</h1>
+  <p>Contagem de shows lançados por mês.</p>
+</div>
+
+<div class="table-container">
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th class="col-month">Mês</th>
+        <th class="col-count">Número de Lançamentos</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio',
+      'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+      %} {% for row in monthlyreleases %}
+      <tr>
+        <td class="col-month">{{ month_names[row.month|int - 1] }}
+        </td>
+        <td class="col-count">{{ row.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    margin-top: 2rem;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 1rem 1.5rem;
+  }
+
+  .styled-table thead tr {
+    background-color: #2c3039;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .styled-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+  }
+
+  .styled-table tbody tr:last-of-type {
+    border-bottom: none;
+  }
+
+  .styled-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .col-count {
+    width: 40%;
+    text-align: right;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .col-month {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+</style>
+
+{% endblock %}

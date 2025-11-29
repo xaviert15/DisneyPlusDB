@@ -316,4 +316,14 @@ def actors_directors():
         ORDER BY total_shows DESC
     ''').fetchall()
     return render_template('actors_directors.html', actorsdirectors=actorsdirectors)
-    
+
+@APP.route('/queries/monthlyreleases')
+def monthly_releases():
+    monthlyreleases = db.execute('''
+        SELECT strftime('%m', date_added) as month, COUNT(show_id) as count
+        FROM Show
+        WHERE date_added IS NOT NULL
+        GROUP BY month
+        ORDER BY month ASC
+    ''').fetchall()
+    return render_template('monthly_releases.html', monthlyreleases=monthlyreleases)
