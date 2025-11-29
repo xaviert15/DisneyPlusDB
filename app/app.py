@@ -327,3 +327,14 @@ def monthly_releases():
         ORDER BY month ASC
     ''').fetchall()
     return render_template('monthly_releases.html', monthlyreleases=monthlyreleases)
+
+@APP.route('/queries/cumulativegrowth')
+def cumulative_growth():
+    growth = db.execute('''
+        SELECT strftime('%Y-%m', date_added) as month, COUNT(*) as monthly_added, SUM(COUNT(*)) OVER (ORDER BY strftime('%Y-%m', date_added)) as cumulative_total
+        FROM Show
+        WHERE date_added IS NOT NULL
+        GROUP BY month
+        ORDER BY month
+    ''').fetchall()
+    return render_template('cumulative_growth.html', growth=growth)
