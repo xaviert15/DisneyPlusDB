@@ -108,7 +108,14 @@
             <span class="arrow">→</span>
           </a>
         </li>
-        {% for i in range(8, 11) %}
+        <li>
+          <a href="/queries/weekdayreleases">
+            <span class="query-number">08</span>
+            <span class="query-title">Lançamentos por Dia da Semana</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
+        {% for i in range(9, 11) %}
         <li class="disabled">
           <a href="#">
             <span class="query-number">{{ "%02d"|format(i) }}</span>

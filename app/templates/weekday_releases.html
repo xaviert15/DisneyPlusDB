@@ -1,0 +1,81 @@
+{% extends "layout.html" %} {% block content %}
+<div class="zone-header">
+  <h1>Lançamentos por Dia da Semana</h1>
+  <p>Contagem de shows lançados por dia da semana.</p>
+</div>
+
+<div class="table-container">
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th class="col-day">Dia da Semana</th>
+        <th class="col-count">Número de Lançamentos</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in weekdayreleases %}
+      <tr>
+        <td class="col-day">{{ row.day_name }}</td>
+        <td class="col-count">{{ row.total_added }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    margin-top: 2rem;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 1rem 1.5rem;
+  }
+
+  .styled-table thead tr {
+    background-color: #2c3039;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .styled-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+  }
+
+  .styled-table tbody tr:last-of-type {
+    border-bottom: none;
+  }
+
+  .styled-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .col-count {
+    text-align: right;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .col-day {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+</style>
+
+{% endblock %}

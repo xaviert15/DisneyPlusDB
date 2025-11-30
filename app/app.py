@@ -338,3 +338,25 @@ def cumulative_growth():
         ORDER BY month
     ''').fetchall()
     return render_template('cumulative_growth.html', growth=growth)
+
+@APP.route('/queries/weekdayreleases')
+def weekday_releases():
+    weekdayreleases = db.execute('''
+        SELECT 
+            CASE CAST(strftime('%w', date_added) AS INTEGER)
+                WHEN 0 THEN 'Domingo'
+                WHEN 1 THEN 'Segunda-feira'
+                WHEN 2 THEN 'Terça-feira'
+                WHEN 3 THEN 'Quarta-feira'
+                WHEN 4 THEN 'Quinta-feira'
+                WHEN 5 THEN 'Sexta-feira'
+                WHEN 6 THEN 'Sábado'
+            END as day_name,
+            COUNT(*) as total_added,
+            CAST(strftime('%w', date_added) AS INTEGER) as day_index
+        FROM Show
+        WHERE date_added IS NOT NULL
+        GROUP BY day_index
+        ORDER BY day_index ASC
+    ''').fetchall()
+    return render_template('weekday_releases.html', weekdayreleases=weekdayreleases)
