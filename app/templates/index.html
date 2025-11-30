@@ -1,6 +1,4 @@
-{% extends "layout.html" %}
-
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <div class="dashboard-container">
   <section class="hero-section">
     <h1>Painel de Controlo</h1>
@@ -13,12 +11,17 @@
         <h2>Exploração de Dados</h2>
         <p>Acesso direto às tabelas principais</p>
       </div>
-      <div class="card-grid">
-        <a href="/show/" class="nav-card">
+      <div class="featured-section">
+        <a href="/show/" class="nav-card featured">
           <div class="icon">🎬</div>
-          <h3>Catálogo Completo</h3>
-          <p>Filmes e Séries</p>
+          <div class="featured-content">
+            <h3>Catálogo Completo</h3>
+            <p>Filmes e Séries</p>
+          </div>
         </a>
+      </div>
+
+      <div class="card-grid-compact">
         <a href="/movies/" class="nav-card">
           <div class="icon">🎞️</div>
           <h3>Filmes</h3>
