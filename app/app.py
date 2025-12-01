@@ -70,7 +70,7 @@ def show_tvshows():
     return render_template('show_tvshows.html', tvshows=tvshows)
 
 # Atores e Diretores
-@APP.route('/persons/')
+@APP.route('/person/')
 def show_persons():
     persons = db.execute('''
         SELECT p.name, p.person_id, COUNT(c.show_id) as participacoes FROM
@@ -250,14 +250,14 @@ def show(id):
                            directors=directors)
 
 # Queries (Placeholders)
-@APP.route('/queries/top-actors')
+@APP.route('/queries/top-actors/')
 def top_actors():
     topActors = db.execute('''
-    select p.name, count(show_id) NumberOfMovies, p.person_id personID from person p join credit c on p.person_id = c.person_id where c.role = 'Actor' group by c.person_id order by NumberOfMovies desc limit 5
+    select p.name, count(show_id) NumberOfShows, p.person_id personID from person p join credit c on p.person_id = c.person_id where c.role = 'Actor' group by c.person_id order by NumberOfShows desc limit 5
     ''').fetchall()
     return render_template('top_Actors.html', topActors=topActors)
 
-@APP.route('/queries/topDurationMovies')
+@APP.route('/queries/topDurationMovies/')
 def top_DurationMovies():
     topDurationMovies = db.execute('''
         WITH RankedMovies AS (
@@ -274,7 +274,7 @@ def top_DurationMovies():
     ''').fetchall()
     return render_template('top_durationMovies.html', topDurationMovies=topDurationMovies)
 
-@APP.route('/queries/topExporters')
+@APP.route('/queries/topExporters/')
 def top_exporters():
     exporters = db.execute('''
         SELECT c.name AS country_name, c.country_id, SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies, SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tv, COUNT(s.show_id) AS total_content
@@ -294,7 +294,7 @@ def top_exporters():
     ''').fetchone()
     return render_template('top_exporters.html', exporters=exporters, exporters_total=exporters_total)
 
-@APP.route('/queries/avgGenreDuration')
+@APP.route('/queries/avgGenreDuration/')
 def avg_durationMovies():
     avgShowGenreDuration = db.execute('''
         select name, show_type, genre_id, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by genre_id, show_type order by show_type, avg desc
@@ -304,7 +304,7 @@ def avg_durationMovies():
     ''').fetchmany(2)
     return render_template('avg_durationShows.html', avgShowGenreDuration=avgShowGenreDuration, avgTVDuration=avgTVDuration, avgMovieDuration=avgMovieDuration)
 
-@APP.route('/queries/actorsdirectors')
+@APP.route('/queries/actorsdirectors/')
 def actors_directors():
     actorsdirectors = db.execute('''
     SELECT 
@@ -317,7 +317,7 @@ def actors_directors():
     ''').fetchall()
     return render_template('actors_directors.html', actorsdirectors=actorsdirectors)
 
-@APP.route('/queries/monthlyreleases')
+@APP.route('/queries/monthlyreleases/')
 def monthly_releases():
     monthlyreleases = db.execute('''
         SELECT strftime('%m', date_added) as month, COUNT(show_id) as count
@@ -328,7 +328,7 @@ def monthly_releases():
     ''').fetchall()
     return render_template('monthly_releases.html', monthlyreleases=monthlyreleases)
 
-@APP.route('/queries/cumulativegrowth')
+@APP.route('/queries/cumulativegrowth/')
 def cumulative_growth():
     growth = db.execute('''
         SELECT strftime('%Y-%m', date_added) as month, COUNT(*) as monthly_added, SUM(COUNT(*)) OVER (ORDER BY strftime('%Y-%m', date_added)) as cumulative_total
@@ -339,7 +339,7 @@ def cumulative_growth():
     ''').fetchall()
     return render_template('cumulative_growth.html', growth=growth)
 
-@APP.route('/queries/weekdayreleases')
+@APP.route('/queries/weekdayreleases/')
 def weekday_releases():
     weekdayreleases = db.execute('''
         SELECT 

@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="zone-header">
-  <h1>Catálogo</h1>
-  <p>Lista dos filmes e séries registados na base de dados.</p>
+  <h1>Top 5 Atores Com Mais Shows</h1>
+  <p>Lista dos 5 atores que participaram em mais shows.</p>
 </div>
 
 <div class="table-container">
@@ -11,14 +11,14 @@
     <thead>
       <tr>
         <th class="col-person" href="">Ator/Atriz</th>
-        <th class="col-movies">Número de Shows</th>
+        <th class="col-shows">Número de Shows</th>
       </tr>
     </thead>
     <tbody>
       {% for a in topActors %}
       <tr>
         <td class="col-person"> <a href="/person/{{ a.personID }}/">{{ a.name }}</a></td>
-        <td class="col-movies">{{ a.NumberOfMovies }}</a> </td>
+        <td class="col-shows">{{ a.NumberOfShows }}</a> </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -69,7 +69,7 @@
     background-color: rgba(255, 255, 255, 0.03);
   }
 
-  .col-movies {
+  .col-shows {
     width: 40%;
     text-align: right;
     font-weight: 500;

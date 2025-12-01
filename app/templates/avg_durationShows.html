@@ -2,29 +2,29 @@
 
 {% block content %}
 <div class="zone-header">
-  <h1>Top 3 Filmes Mais Longos por Género</h1>
-  <p>Ranking dos filmes com maior duração em cada categoria.</p>
+  <h1>Duração Média de Géneros</h1>
+  <p>Duração média de um filme ou seŕie por género.</p>
 </div>
 
 <div class="table-container">
   <table class="styled-table">
     <thead>
       <tr>
-        <th class="col-type">#</th>
+        <th class="col-type">Tipo</th>
         <th class="col-genre">Genre</th>
-        <th class="col-dur">Duração</th>
+        <th class="col-dur">Duração Média</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td class="col-type"><a href="/tvshows/">TV Show</a></td>
-        <td class="col-genre">ALL</td>
-        <td class="col-dur">{{ avgTVDuration.avg }} Seasons</td>
-      </tr>
-      <tr>
         <td class="col-type"><a href="/movies/">Movie</a></td>
         <td class="col-genre">ALL</td>
         <td class="col-dur">{{ avgMovieDuration.avg }} min</td>
+      </tr>
+      <tr>
+        <td class="col-type"><a href="/tvshows/">TV Show</a></td>
+        <td class="col-genre">ALL</td>
+        <td class="col-dur">{{ avgTVDuration.avg }} Seasons</td>
       </tr>
       {% for g in avgShowGenreDuration %}
       <tr>
