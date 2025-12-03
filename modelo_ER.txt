@@ -1,0 +1,35 @@
+SHOW
+(
+  _ show_id _,
+  title,
+  description,
+  show_type,
+  release_date,
+  date_added?,
+  duration_value,
+  duration_unit
+)
+PERSON
+(
+  _ person_id _,
+  name
+)
+GENRE
+(
+  _ genre_id _,
+  name
+)
+COUNTRY
+(
+  _ country_id _,
+  name
+)
+RATING
+(
+  _ rating_id _,
+  code
+)
+SHOW --- N --- < Tem_Credito > --- M --- PERSON
+SHOW --- 1 --- < Classificado_Em > --- N --- RATING
+SHOW --- N --- < Listado_Em > --- M --- GENRE
+SHOW --- N --- < Produzido_Em > --- M --- COUNTRY
