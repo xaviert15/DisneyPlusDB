@@ -11,21 +11,26 @@ SHOW
 )
 PERSON
 (
-  _ name _
+  _ person_id _,
+  name
 )
 GENRE
 (
-  _ name _
+  _ genre_id _,
+  name
 )
 COUNTRY
 (
-  _ name _
+  _ country_id _,
+  name
 )
 RATING
 (
-  _ code _
+  _ rating_id _,
+  code
 )
 SHOW --- N --- < Tem_Credito > --- M --- PERSON
 SHOW --- 1 --- < Classificado_Em > --- N --- RATING
 SHOW --- N --- < Listado_Em > --- M --- GENRE
 SHOW --- N --- < Produzido_Em > --- M --- COUNTRY
+
