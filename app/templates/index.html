@@ -118,15 +118,20 @@
             <span class="arrow">→</span>
           </a>
         </li>
-        {% for i in range(9, 11) %}
-        <li class="disabled">
-          <a href="#">
-            <span class="query-number">{{ "%02d"|format(i) }}</span>
-            <span class="query-title">Consulta SQL {{ i }} (Brevemente)</span>
+        <li>
+          <a href="/queries/genres-by-rating/">
+            <span class="query-number">09</span>
+            <span class="query-title">Géneros Mais Populares por Rating</span>
             <span class="arrow">→</span>
           </a>
         </li>
-        {% endfor %}
+        <li>
+          <a href="/queries/top-directors/">
+            <span class="query-number">10</span>
+            <span class="query-title">Top 10 Diretores Mais Prolíficos</span>
+            <span class="arrow">→</span>
+          </a>
+        </li>
       </ul>
     </section>
   </div>

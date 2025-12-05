@@ -360,3 +360,42 @@ def weekday_releases():
         ORDER BY day_index ASC
     ''').fetchall()
     return render_template('weekday_releases.html', weekdayreleases=weekdayreleases)
+
+@APP.route('/queries/genres-by-rating/')
+def genres_by_rating():
+    genres_rating = db.execute('''
+        SELECT 
+            g.genre_id,
+            g.name AS genre_name,
+            r.code AS rating_code,
+            COUNT(DISTINCT s.show_id) AS total_shows,
+            SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies,
+            SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tvshows
+        FROM Genre g
+        LEFT JOIN Show_Genre sg ON g.genre_id = sg.genre_id
+        LEFT JOIN Show s ON sg.show_id = s.show_id
+        LEFT JOIN Rating r ON s.rating_id = r.rating_id
+        WHERE s.show_id IS NOT NULL
+        GROUP BY g.genre_id, r.rating_id
+        ORDER BY g.name ASC, total_shows DESC
+    ''').fetchall()
+    return render_template('genres_by_rating.html', genres_rating=genres_rating)
+
+@APP.route('/queries/top-directors/')
+def top_directors():
+    top_dirs = db.execute('''
+        SELECT 
+            p.person_id,
+            p.name,
+            COUNT(DISTINCT c.show_id) AS total_productions,
+            SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies,
+            SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tvshows
+        FROM Person p
+        JOIN Credit c ON p.person_id = c.person_id
+        JOIN Show s ON c.show_id = s.show_id
+        WHERE c.role = 'Director'
+        GROUP BY p.person_id
+        ORDER BY total_productions DESC
+        LIMIT 10
+    ''').fetchall()
+    return render_template('top_directors.html', top_dirs=top_dirs) 
