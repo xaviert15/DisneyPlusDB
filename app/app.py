@@ -361,7 +361,7 @@ def weekday_releases():
     ''').fetchall()
     return render_template('weekday_releases.html', weekdayreleases=weekdayreleases)
 
-@APP.route('/queries/genres-by-rating/')
+@APP.route('/queries/genresByRating/')
 def genres_by_rating():
     genres_rating = db.execute('''
         SELECT 
@@ -381,7 +381,7 @@ def genres_by_rating():
     ''').fetchall()
     return render_template('genres_by_rating.html', genres_rating=genres_rating)
 
-@APP.route('/queries/top-directors/')
+@APP.route('/queries/topDirectors/')
 def top_directors():
     top_dirs = db.execute('''
         SELECT 
