@@ -250,14 +250,14 @@ def show(id):
                            directors=directors)
 
 # Queries (Placeholders)
-@APP.route('/queries/top-actors/')
+@APP.route('/queries/topactors/')
 def top_actors():
     topActors = db.execute('''
     select p.name, count(show_id) NumberOfShows, p.person_id personID from person p join credit c on p.person_id = c.person_id where c.role = 'Actor' group by c.person_id order by NumberOfShows desc limit 5
     ''').fetchall()
     return render_template('top_Actors.html', topActors=topActors)
 
-@APP.route('/queries/topDurationMovies/')
+@APP.route('/queries/topdurationmovies/')
 def top_DurationMovies():
     topDurationMovies = db.execute('''
         WITH RankedMovies AS (
@@ -274,7 +274,7 @@ def top_DurationMovies():
     ''').fetchall()
     return render_template('top_durationMovies.html', topDurationMovies=topDurationMovies)
 
-@APP.route('/queries/topExporters/')
+@APP.route('/queries/topexporters/')
 def top_exporters():
     exporters = db.execute('''
         SELECT c.name AS country_name, c.country_id, SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies, SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tv, COUNT(s.show_id) AS total_content
@@ -294,7 +294,7 @@ def top_exporters():
     ''').fetchone()
     return render_template('top_exporters.html', exporters=exporters, exporters_total=exporters_total)
 
-@APP.route('/queries/avgGenreDuration/')
+@APP.route('/queries/avggenreduration/')
 def avg_durationMovies():
     avgShowGenreDuration = db.execute('''
         select name, show_type, genre_id, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by genre_id, show_type order by show_type, avg desc
@@ -361,7 +361,7 @@ def weekday_releases():
     ''').fetchall()
     return render_template('weekday_releases.html', weekdayreleases=weekdayreleases)
 
-@APP.route('/queries/genresByRating/')
+@APP.route('/queries/genresbyrating/')
 def genres_by_rating():
     genres_rating = db.execute('''
         SELECT 
@@ -381,7 +381,7 @@ def genres_by_rating():
     ''').fetchall()
     return render_template('genres_by_rating.html', genres_rating=genres_rating)
 
-@APP.route('/queries/topDirectors/')
+@APP.route('/queries/topdirectors/')
 def top_directors():
     top_dirs = db.execute('''
         SELECT 
