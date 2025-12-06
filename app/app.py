@@ -97,7 +97,6 @@ def show_persons():
 # Detalhe de Pessoa
 @APP.route('/person/<int:code>/')
 def person(code):
-    # CORREÇÃO: Parametrização do ID
     person = db.execute('SELECT * FROM Person WHERE person_id = ?', [code]).fetchone()
     
     shows = db.execute('''
@@ -129,7 +128,6 @@ def show_genre():
 # Detalhe de Género
 @APP.route('/genre/<int:code>/')
 def genre(code):
-    # CORREÇÃO: Parametrização do ID
     genre = db.execute('SELECT * FROM Genre WHERE genre_id = ?', [code]).fetchone()
     
     shows = db.execute('''
@@ -158,7 +156,6 @@ def show_country():
 # Detalhe de País
 @APP.route('/country/<int:code>/')
 def country(code):
-    # CORREÇÃO: Parametrização do ID
     country = db.execute('SELECT * FROM Country WHERE country_id = ?', [code]).fetchone()
     
     shows = db.execute('''
@@ -186,7 +183,6 @@ def show_rating():
 
 @APP.route('/rating/<int:code>/')
 def rating(code):
-    # CORREÇÃO: Parametrização do ID
     rating = db.execute('SELECT * FROM Rating WHERE rating_id = ?', [code]).fetchone()
     
     shows = db.execute('''
@@ -205,7 +201,6 @@ def rating(code):
 @APP.route('/year/<int:code>/')
 def year(code):
     year_str = str(code)
-    # CORREÇÃO: Parametrização do Ano
     shows = db.execute('''
         SELECT s.show_id, s.title, s.description, s.show_type, 
                s.release_date, s.date_added, s.duration_value, 
@@ -221,7 +216,6 @@ def year(code):
 # Detalhe de Show (Movie + TV Show)
 @APP.route('/show/<int:id>/')
 def show(id):
-    # CORREÇÃO: Parametrização do ID
     show = db.execute('''
         SELECT s.*, r.code as rating_code
         FROM Show s
@@ -267,7 +261,7 @@ def show(id):
                            actors=actors, 
                            directors=directors)
 
-# --- QUERIES ESPECÍFICAS (Sem inputs de utilizador, não precisam de parametrização) ---
+# --- QUERIES ESPECÍFICAS ---
 
 @APP.route('/queries/topactors/')
 def top_actors():
