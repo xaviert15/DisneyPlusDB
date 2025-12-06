@@ -17,38 +17,49 @@ def show_all():
     search = request.args.get('search')
     order = request.args.get('order')
     direction = request.args.get('direction', 'asc')
+    
+    # Validação de segurança para ordenação (White-listing)
     possible_order = ['show_id', 'duration_value', 'release_date', 'date_added']
     if order not in possible_order:
         order = 'show_id'
     if direction not in ['asc', 'desc']:
         direction = 'asc'
+    
+    # Query Base
+    base_query = f'''
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id 
+        FROM Show as s
+        LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
+        LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+    '''
+    
     if search:
-        shows = db.execute(f'''
-            SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
-            Show as s
-            LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
-            LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+        # CORREÇÃO DE SEGURANÇA: Uso de ? para os parâmetros de pesquisa
+        query = base_query + f'''
             WHERE s.title LIKE ? OR s.description LIKE ?
             GROUP BY s.show_id
             ORDER BY s.{order} {direction}
-            ''', [f'%{search}%', f'%{search}%']).fetchall()
+        '''
+        # Os valores são passados como uma lista no segundo argumento
+        search_term = f'%{search}%'
+        shows = db.execute(query, [search_term, search_term]).fetchall()
     else:
-        shows = db.execute(f'''
-            SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
-            Show as s
-            LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
-            LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
+        query = base_query + f'''
             GROUP BY s.show_id
             ORDER BY s.{order} {direction}
-            ''').fetchall()
+        '''
+        shows = db.execute(query).fetchall()
+        
     return render_template('show_all.html', shows=shows, order=order, direction=direction)
 
 # Filmes
 @APP.route('/movies/')
 def show_movies():
     movies = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
-        Show as s
+        SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id 
+        FROM Show as s
         LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE s.show_type="Movie"
@@ -60,8 +71,9 @@ def show_movies():
 @APP.route('/tvshows/')
 def show_tvshows():
     tvshows = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id FROM
-        Show as s
+        SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id 
+        FROM Show as s
         LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE s.show_type="TV Show"
@@ -69,27 +81,30 @@ def show_tvshows():
         ''').fetchall()
     return render_template('show_tvshows.html', tvshows=tvshows)
 
-# Atores e Diretores
+# Atores e Diretores (Lista)
 @APP.route('/person/')
 def show_persons():
     persons = db.execute('''
-        SELECT p.name, p.person_id, COUNT(c.show_id) as participacoes FROM
-        Person AS p
+        SELECT p.name, p.person_id, COUNT(c.show_id) as participacoes 
+        FROM Person AS p
         LEFT JOIN Credit AS c ON p.person_id=c.person_id
         GROUP BY p.person_id
+        ORDER BY participacoes DESC
+        LIMIT 100 -- Limitado para não sobrecarregar a página
         ''').fetchall()
     return render_template('show_persons.html', persons=persons)
 
+# Detalhe de Pessoa
 @APP.route('/person/<int:code>/')
 def person(code):
-    person = db.execute('''
-        SELECT * FROM
-        Person
-        WHERE person_id = ?
-    ''', [code]).fetchone()
+    # CORREÇÃO: Parametrização do ID
+    person = db.execute('SELECT * FROM Person WHERE person_id = ?', [code]).fetchone()
+    
     shows = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id, GROUP_CONCAT(DISTINCT c.role) as role_name FROM
-        Show as s
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id, 
+               GROUP_CONCAT(DISTINCT c.role) as role_name 
+        FROM Show as s
         LEFT JOIN credit AS c ON s.show_id=c.show_id
         LEFT JOIN person AS p ON c.person_id=p.person_id
         LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
@@ -97,29 +112,30 @@ def person(code):
         WHERE c.person_id=?
         GROUP BY s.show_id
     ''', [code]).fetchall()
+    
     return render_template('person.html', person=person, shows=shows)
 
-# Géneros
+# Lista de Géneros
 @APP.route('/genre/')
 def show_genre():
     genres = db.execute('''
-        SELECT g.genre_id, g.name, COUNT(sg.show_id) as counter FROM
-        Genre as g
+        SELECT g.genre_id, g.name, COUNT(sg.show_id) as counter 
+        FROM Genre as g
         LEFT JOIN show_genre as sg on g.genre_id=sg.genre_id
         GROUP BY g.genre_id
     ''').fetchall()
     return render_template('show_genre.html', genres=genres)
 
+# Detalhe de Género
 @APP.route('/genre/<int:code>/')
 def genre(code):
-    genre = db.execute('''
-        SELECT * FROM
-        Genre
-        WHERE genre_id = ?
-    ''', [code]).fetchone()
+    # CORREÇÃO: Parametrização do ID
+    genre = db.execute('SELECT * FROM Genre WHERE genre_id = ?', [code]).fetchone()
+    
     shows = db.execute('''
-        SELECT s.show_id, s.title, s.show_type, s.description, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name FROM
-        Show as s
+        SELECT s.show_id, s.title, s.show_type, s.description, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name 
+        FROM Show as s
         JOIN Show_Genre AS sg on s.show_id=sg.show_id
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE sg.genre_id=?
@@ -127,27 +143,28 @@ def genre(code):
     ''', [code]).fetchall()
     return render_template('genre.html', genre=genre, shows=shows)
 
-# Países
+# Lista de Países
 @APP.route('/country/')
 def show_country():
     countries = db.execute('''
-        SELECT c.country_id, c.name, COUNT(sc.show_id) as counter FROM
-        Country AS c
+        SELECT c.country_id, c.name, COUNT(sc.show_id) as counter 
+        FROM Country AS c
         LEFT JOIN show_country as sc ON c.country_id=sc.country_id
         GROUP BY c.country_id
+        ORDER BY counter DESC
     ''').fetchall()
     return render_template('show_country.html', countries=countries)
 
+# Detalhe de País
 @APP.route('/country/<int:code>/')
 def country(code):
-    country = db.execute('''
-        SELECT * FROM
-        Country
-        WHERE country_id = ?
-    ''', [code]).fetchone()
+    # CORREÇÃO: Parametrização do ID
+    country = db.execute('SELECT * FROM Country WHERE country_id = ?', [code]).fetchone()
+    
     shows = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name FROM
-        Show as s
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name 
+        FROM Show as s
         JOIN Show_Country AS sc ON s.show_id = sc.show_id
         LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
@@ -156,13 +173,12 @@ def country(code):
     ''', [code]).fetchall()
     return render_template('country.html', country=country, shows=shows)
 
-
 # Ratings
 @APP.route('/rating/')
 def show_rating():
     ratings = db.execute('''
-        SELECT r.rating_id, r.code, COUNT(s.show_id) as counter FROM
-        Rating as R
+        SELECT r.rating_id, r.code, COUNT(s.show_id) as counter 
+        FROM Rating as R
         LEFT JOIN Show as s ON r.rating_id = s.rating_id
         GROUP BY r.rating_id
         ''').fetchall()
@@ -170,14 +186,13 @@ def show_rating():
 
 @APP.route('/rating/<int:code>/')
 def rating(code):
-    rating = db.execute('''
-        SELECT * FROM
-        Rating
-        WHERE rating_id = ?
-    ''', [code]).fetchone()
+    # CORREÇÃO: Parametrização do ID
+    rating = db.execute('SELECT * FROM Rating WHERE rating_id = ?', [code]).fetchone()
+    
     shows = db.execute('''
-        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, s.duration_value, s.duration_unit, g.name as genre_name FROM
-        Show as s
+        SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
+               s.duration_value, s.duration_unit, g.name as genre_name 
+        FROM Show as s
         JOIN Rating AS r ON r.rating_id = s.rating_id
         LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
@@ -190,6 +205,7 @@ def rating(code):
 @APP.route('/year/<int:code>/')
 def year(code):
     year_str = str(code)
+    # CORREÇÃO: Parametrização do Ano
     shows = db.execute('''
         SELECT s.show_id, s.title, s.description, s.show_type, 
                s.release_date, s.date_added, s.duration_value, 
@@ -202,10 +218,10 @@ def year(code):
     ''', [year_str]).fetchall()
     return render_template('year.html', year=code, shows=shows)
 
-# Show (Movie + TV Show)
+# Detalhe de Show (Movie + TV Show)
 @APP.route('/show/<int:id>/')
 def show(id):
-    # 1. Informação Principal do Filme + Rating
+    # CORREÇÃO: Parametrização do ID
     show = db.execute('''
         SELECT s.*, r.code as rating_code
         FROM Show s
@@ -216,7 +232,7 @@ def show(id):
     if not show:
         return "Filme não encontrado", 404
 
-    # 2. Buscar Géneros
+    # Buscar Géneros
     genres = db.execute('''
         SELECT g.genre_id, g.name 
         FROM Genre g
@@ -224,7 +240,7 @@ def show(id):
         WHERE sg.show_id = ?
     ''', [id]).fetchall()
 
-    # 3. Buscar Países
+    # Buscar Países
     countries = db.execute('''
         SELECT c.country_id, c.name 
         FROM Country c
@@ -232,7 +248,7 @@ def show(id):
         WHERE sc.show_id = ?
     ''', [id]).fetchall()
 
-    # 4. Buscar Elenco e Diretores (Tudo junto e separamos no Python)
+    # Buscar Elenco e Diretores
     credits = db.execute('''
         SELECT p.person_id, p.name, c.role
         FROM Person p
@@ -240,8 +256,10 @@ def show(id):
         WHERE c.show_id = ?
         ORDER BY p.name
     ''', [id]).fetchall()
+    
     actors = [p for p in credits if p['role'] == 'Actor']
     directors = [p for p in credits if p['role'] == 'Director']
+    
     return render_template('show.html', 
                            show=show, 
                            genres=genres, 
@@ -249,7 +267,8 @@ def show(id):
                            actors=actors, 
                            directors=directors)
 
-# Queries (Placeholders)
+# --- QUERIES ESPECÍFICAS (Sem inputs de utilizador, não precisam de parametrização) ---
+
 @APP.route('/queries/topactors/')
 def top_actors():
     topActors = db.execute('''
@@ -398,4 +417,4 @@ def top_directors():
         ORDER BY total_productions DESC
         LIMIT 10
     ''').fetchall()
-    return render_template('top_directors.html', top_dirs=top_dirs) 
+    return render_template('top_directors.html', top_dirs=top_dirs)
