@@ -89,8 +89,6 @@ def show_persons():
         FROM Person AS p
         LEFT JOIN Credit AS c ON p.person_id=c.person_id
         GROUP BY p.person_id
-        ORDER BY participacoes DESC
-        LIMIT 100 -- Limitado para não sobrecarregar a página
         ''').fetchall()
     return render_template('show_persons.html', persons=persons)
 
@@ -149,7 +147,6 @@ def show_country():
         FROM Country AS c
         LEFT JOIN show_country as sc ON c.country_id=sc.country_id
         GROUP BY c.country_id
-        ORDER BY counter DESC
     ''').fetchall()
     return render_template('show_country.html', countries=countries)
 
