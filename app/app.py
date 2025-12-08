@@ -263,7 +263,13 @@ def show(id):
 @APP.route('/queries/topactors/')
 def top_actors():
     topActors = db.execute('''
-    select p.name, count(show_id) NumberOfShows, p.person_id personID from person p join credit c on p.person_id = c.person_id where c.role = 'Actor' group by c.person_id order by NumberOfShows desc limit 5
+        SELECT p.name, COUNT(c.show_id) AS NumberOfShows, p.person_id AS personID
+        FROM person p
+        JOIN credit c ON p.person_id = c.person_id
+        WHERE c.role = 'Actor'
+        GROUP BY p.person_id
+        ORDER BY NumberOfShows DESC
+        LIMIT 5
     ''').fetchall()
     return render_template('top_Actors.html', topActors=topActors)
 
