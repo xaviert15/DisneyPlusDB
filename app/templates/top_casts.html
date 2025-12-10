@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="zone-header">
+  <h1>Top Shows por Tamanho do Elenco</h1>
+  <p>Lista dos shows com maior número de atores (top 15).</p>
+</div>
+
+<div class="table-container">
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th class="col-rank">#</th>
+        <th class="col-show">Show</th>
+        <th class="col-type">Tipo</th>
+        <th class="col-num">Tamanho do Elenco</th>
+        <th class="col-rdate">Data de Lançamento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in top_casts %}
+      <tr>
+        <td class="col-rank">{{ loop.index }}</td>
+        <td class="col-show"><a href="/show/{{ s['show_id'] }}/">{{ s['title'] }}</a></td>
+        <td class="col-type">{{ s['show_type'] }}</td>
+        <td class="col-num">{{ s['cast_size'] }}</td>
+        <td class="col-rdate">{{ s['release_date'] or 'N/A' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+  }
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; text-align: left; }
+  .styled-table th, .styled-table td { padding: 0.8rem 1.5rem; }
+  .styled-table thead tr { background-color: #2c3039; color: var(--text-primary); text-transform: uppercase; font-size: 0.85rem; border-bottom: 2px solid var(--border-color); }
+  .styled-table tbody tr { border-bottom: 1px solid var(--border-color); }
+  .styled-table tbody tr:hover { background-color: rgba(255,255,255,0.03); }
+  .col-rank { width: 5%; text-align: center; color: var(--text-secondary); }
+  .col-show { width: 45%; font-weight: 500; color: var(--text-primary); }
+  .col-type { width: 15%; }
+  .col-num { width: 10%; text-align: right; font-family: monospace; }
+  .col-rdate { width: 20%; }
+  .col-show a { color: inherit; text-decoration: none; font-weight: bold; }
+  .col-show a:hover { color: #61dafb; text-decoration: underline; }
+</style>
+
+{% endblock %}
