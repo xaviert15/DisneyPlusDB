@@ -1,4 +1,5 @@
 import warnings
+
 warnings.filterwarnings("ignore", category=FutureWarning)
 from flask import render_template, Flask, request
 import logging
@@ -6,57 +7,69 @@ import db
 
 APP = Flask(__name__)
 
+
 # Start page
-@APP.route('/')
+@APP.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
+
 
 # Catálogo Completo
-@APP.route('/show/')
+@APP.route("/show/")
 def show_all():
-    search = request.args.get('search')
-    order = request.args.get('order')
-    direction = request.args.get('direction', 'asc')
-    
+    search = request.args.get("search")
+    order = request.args.get("order")
+    direction = request.args.get("direction", "asc")
+
     # Validação de segurança para ordenação (White-listing)
-    possible_order = ['show_id', 'duration_value', 'release_date', 'date_added']
+    possible_order = ["show_id", "duration_value", "release_date", "date_added"]
     if order not in possible_order:
-        order = 'show_id'
-    if direction not in ['asc', 'desc']:
-        direction = 'asc'
-    
+        order = "show_id"
+    if direction not in ["asc", "desc"]:
+        direction = "asc"
+
     # Query Base
-    base_query = f'''
+    base_query = f"""
         SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id 
         FROM Show as s
         LEFT JOIN Show_Genre AS sg on s.show_id=sg.show_id
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
-    '''
-    
+    """
+
     if search:
         # CORREÇÃO DE SEGURANÇA: Uso de ? para os parâmetros de pesquisa
-        query = base_query + f'''
+        query = (
+            base_query
+            + f"""
             WHERE s.title LIKE ? OR s.description LIKE ?
             GROUP BY s.show_id
             ORDER BY s.{order} {direction}
-        '''
+        """
+        )
         # Os valores são passados como uma lista no segundo argumento
-        search_term = f'%{search}%'
+        search_term = f"%{search}%"
         shows = db.execute(query, [search_term, search_term]).fetchall()
     else:
-        query = base_query + f'''
+        query = (
+            base_query
+            + f"""
             GROUP BY s.show_id
             ORDER BY s.{order} {direction}
-        '''
+        """
+        )
         shows = db.execute(query).fetchall()
-        
-    return render_template('show_all.html', shows=shows, order=order, direction=direction)
+
+    return render_template(
+        "show_all.html", shows=shows, order=order, direction=direction
+    )
+
 
 # Filmes
-@APP.route('/movies/')
+@APP.route("/movies/")
 def show_movies():
-    movies = db.execute('''
+    movies = db.execute(
+        """
         SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id 
         FROM Show as s
@@ -64,13 +77,16 @@ def show_movies():
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE s.show_type="Movie"
         GROUP BY s.show_id
-        ''').fetchall()
-    return render_template('show_movies.html', movies=movies)
+        """
+    ).fetchall()
+    return render_template("show_movies.html", movies=movies)
+
 
 # TV Shows
-@APP.route('/tvshows/')
+@APP.route("/tvshows/")
 def show_tvshows():
-    tvshows = db.execute('''
+    tvshows = db.execute(
+        """
         SELECT s.show_id, s.title, s.description, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id as genre_id 
         FROM Show as s
@@ -78,26 +94,32 @@ def show_tvshows():
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE s.show_type="TV Show"
         GROUP BY s.show_id
-        ''').fetchall()
-    return render_template('show_tvshows.html', tvshows=tvshows)
+        """
+    ).fetchall()
+    return render_template("show_tvshows.html", tvshows=tvshows)
+
 
 # Atores e Diretores (Lista)
-@APP.route('/person/')
+@APP.route("/person/")
 def show_persons():
-    persons = db.execute('''
+    persons = db.execute(
+        """
         SELECT p.name, p.person_id, COUNT(c.show_id) as participacoes 
         FROM Person AS p
         LEFT JOIN Credit AS c ON p.person_id=c.person_id
         GROUP BY p.person_id
-        ''').fetchall()
-    return render_template('show_persons.html', persons=persons)
+        """
+    ).fetchall()
+    return render_template("show_persons.html", persons=persons)
+
 
 # Detalhe de Pessoa
-@APP.route('/person/<int:code>/')
+@APP.route("/person/<int:code>/")
 def person(code):
-    person = db.execute('SELECT * FROM Person WHERE person_id = ?', [code]).fetchone()
-    
-    shows = db.execute('''
+    person = db.execute("SELECT * FROM Person WHERE person_id = ?", [code]).fetchone()
+
+    shows = db.execute(
+        """
         SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name, g.genre_id, 
                GROUP_CONCAT(DISTINCT c.role) as role_name 
@@ -108,27 +130,34 @@ def person(code):
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE c.person_id=?
         GROUP BY s.show_id
-    ''', [code]).fetchall()
-    
-    return render_template('person.html', person=person, shows=shows)
+    """,
+        [code],
+    ).fetchall()
+
+    return render_template("person.html", person=person, shows=shows)
+
 
 # Lista de Géneros
-@APP.route('/genre/')
+@APP.route("/genre/")
 def show_genre():
-    genres = db.execute('''
+    genres = db.execute(
+        """
         SELECT g.genre_id, g.name, COUNT(sg.show_id) as counter 
         FROM Genre as g
         LEFT JOIN show_genre as sg on g.genre_id=sg.genre_id
         GROUP BY g.genre_id
-    ''').fetchall()
-    return render_template('show_genre.html', genres=genres)
+    """
+    ).fetchall()
+    return render_template("show_genre.html", genres=genres)
+
 
 # Detalhe de Género
-@APP.route('/genre/<int:code>/')
+@APP.route("/genre/<int:code>/")
 def genre(code):
-    genre = db.execute('SELECT * FROM Genre WHERE genre_id = ?', [code]).fetchone()
-    
-    shows = db.execute('''
+    genre = db.execute("SELECT * FROM Genre WHERE genre_id = ?", [code]).fetchone()
+
+    shows = db.execute(
+        """
         SELECT s.show_id, s.title, s.show_type, s.description, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name 
         FROM Show as s
@@ -136,26 +165,35 @@ def genre(code):
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE sg.genre_id=?
         GROUP BY s.show_id
-    ''', [code]).fetchall()
-    return render_template('genre.html', genre=genre, shows=shows)
+    """,
+        [code],
+    ).fetchall()
+    return render_template("genre.html", genre=genre, shows=shows)
+
 
 # Lista de Países
-@APP.route('/country/')
+@APP.route("/country/")
 def show_country():
-    countries = db.execute('''
+    countries = db.execute(
+        """
         SELECT c.country_id, c.name, COUNT(sc.show_id) as counter 
         FROM Country AS c
         LEFT JOIN show_country as sc ON c.country_id=sc.country_id
         GROUP BY c.country_id
-    ''').fetchall()
-    return render_template('show_country.html', countries=countries)
+    """
+    ).fetchall()
+    return render_template("show_country.html", countries=countries)
+
 
 # Detalhe de País
-@APP.route('/country/<int:code>/')
+@APP.route("/country/<int:code>/")
 def country(code):
-    country = db.execute('SELECT * FROM Country WHERE country_id = ?', [code]).fetchone()
-    
-    shows = db.execute('''
+    country = db.execute(
+        "SELECT * FROM Country WHERE country_id = ?", [code]
+    ).fetchone()
+
+    shows = db.execute(
+        """
         SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, s.rating_id, g.name as genre_name 
         FROM Show as s
@@ -164,25 +202,32 @@ def country(code):
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE sc.country_id=?
         GROUP BY s.show_id
-    ''', [code]).fetchall()
-    return render_template('country.html', country=country, shows=shows)
+    """,
+        [code],
+    ).fetchall()
+    return render_template("country.html", country=country, shows=shows)
+
 
 # Ratings
-@APP.route('/rating/')
+@APP.route("/rating/")
 def show_rating():
-    ratings = db.execute('''
+    ratings = db.execute(
+        """
         SELECT r.rating_id, r.code, COUNT(s.show_id) as counter 
         FROM Rating as R
         LEFT JOIN Show as s ON r.rating_id = s.rating_id
         GROUP BY r.rating_id
-        ''').fetchall()
-    return render_template('show_rating.html', ratings=ratings)
+        """
+    ).fetchall()
+    return render_template("show_rating.html", ratings=ratings)
 
-@APP.route('/rating/<int:code>/')
+
+@APP.route("/rating/<int:code>/")
 def rating(code):
-    rating = db.execute('SELECT * FROM Rating WHERE rating_id = ?', [code]).fetchone()
-    
-    shows = db.execute('''
+    rating = db.execute("SELECT * FROM Rating WHERE rating_id = ?", [code]).fetchone()
+
+    shows = db.execute(
+        """
         SELECT s.show_id, s.title, s.description, s.show_type, s.release_date, s.date_added, 
                s.duration_value, s.duration_unit, g.name as genre_name 
         FROM Show as s
@@ -191,14 +236,18 @@ def rating(code):
         LEFT JOIN Genre AS g on sg.genre_id=g.genre_id
         WHERE r.rating_id=?
         GROUP BY s.show_id
-    ''', [code]).fetchall()
-    return render_template('rating.html', rating=rating, shows=shows)
+    """,
+        [code],
+    ).fetchall()
+    return render_template("rating.html", rating=rating, shows=shows)
+
 
 # Ano de Realização
-@APP.route('/year/<int:code>/')
+@APP.route("/year/<int:code>/")
 def year(code):
     year_str = str(code)
-    shows = db.execute('''
+    shows = db.execute(
+        """
         SELECT s.show_id, s.title, s.description, s.show_type, 
                s.release_date, s.date_added, s.duration_value, 
                s.duration_unit, s.rating_id, g.name as genre_name 
@@ -207,62 +256,82 @@ def year(code):
         LEFT JOIN Genre AS g on sg.genre_id = g.genre_id
         WHERE strftime('%Y', s.release_date) = ?
         GROUP BY s.show_id
-    ''', [year_str]).fetchall()
-    return render_template('year.html', year=code, shows=shows)
+    """,
+        [year_str],
+    ).fetchall()
+    return render_template("year.html", year=code, shows=shows)
+
 
 # Detalhe de Show (Movie + TV Show)
-@APP.route('/show/<int:id>/')
+@APP.route("/show/<int:id>/")
 def show(id):
-    show = db.execute('''
+    show = db.execute(
+        """
         SELECT s.*, r.code as rating_code
         FROM Show s
         LEFT JOIN Rating r ON s.rating_id = r.rating_id
         WHERE s.show_id = ?
-    ''', [id]).fetchone()
+    """,
+        [id],
+    ).fetchone()
 
     if not show:
         return "Filme não encontrado", 404
 
     # Buscar Géneros
-    genres = db.execute('''
+    genres = db.execute(
+        """
         SELECT g.genre_id, g.name 
         FROM Genre g
         JOIN Show_Genre sg ON g.genre_id = sg.genre_id
         WHERE sg.show_id = ?
-    ''', [id]).fetchall()
+    """,
+        [id],
+    ).fetchall()
 
     # Buscar Países
-    countries = db.execute('''
+    countries = db.execute(
+        """
         SELECT c.country_id, c.name 
         FROM Country c
         JOIN Show_Country sc ON c.country_id = sc.country_id
         WHERE sc.show_id = ?
-    ''', [id]).fetchall()
+    """,
+        [id],
+    ).fetchall()
 
     # Buscar Elenco e Diretores
-    credits = db.execute('''
+    credits = db.execute(
+        """
         SELECT p.person_id, p.name, c.role
         FROM Person p
         JOIN Credit c ON p.person_id = c.person_id
         WHERE c.show_id = ?
         ORDER BY p.name
-    ''', [id]).fetchall()
-    
-    actors = [p for p in credits if p['role'] == 'Actor']
-    directors = [p for p in credits if p['role'] == 'Director']
-    
-    return render_template('show.html', 
-                           show=show, 
-                           genres=genres, 
-                           countries=countries, 
-                           actors=actors, 
-                           directors=directors)
+    """,
+        [id],
+    ).fetchall()
+
+    actors = [p for p in credits if p["role"] == "Actor"]
+    directors = [p for p in credits if p["role"] == "Director"]
+
+    return render_template(
+        "show.html",
+        show=show,
+        genres=genres,
+        countries=countries,
+        actors=actors,
+        directors=directors,
+    )
+
 
 # --- QUERIES ESPECÍFICAS ---
 
-@APP.route('/queries/topactors/')
+
+@APP.route("/queries/topactors/")
 def top_actors():
-    topActors = db.execute('''
+    topActors = db.execute(
+        """
         SELECT p.name, COUNT(c.show_id) AS NumberOfShows, p.person_id AS personID
         FROM person p
         JOIN credit c ON p.person_id = c.person_id
@@ -270,12 +339,15 @@ def top_actors():
         GROUP BY p.person_id
         ORDER BY NumberOfShows DESC
         LIMIT 5
-    ''').fetchall()
-    return render_template('top_Actors.html', topActors=topActors)
+    """
+    ).fetchall()
+    return render_template("top_Actors.html", topActors=topActors)
 
-@APP.route('/queries/topdurationmovies/')
+
+@APP.route("/queries/topdurationmovies/")
 def top_DurationMovies():
-    topdurationmovies = db.execute('''
+    topdurationmovies = db.execute(
+        """
         SELECT NAME     AS genrename,
                title    AS movietitle,
                duration_value,
@@ -283,22 +355,27 @@ def top_DurationMovies():
                genre_id AS genreID,
                show_id  AS showID
         FROM   show
-               natural JOIN show_genre
-               natural JOIN genre
+               NATURAL JOIN show_genre
+               NATURAL JOIN genre
         WHERE  show_type = 'Movie'
                AND ( genre_id, duration_value ) IN (SELECT genre_id,
                                                    Max(duration_value)
                                             FROM   show
-                                                   natural JOIN show_genre
+                                                   NATURAL JOIN show_genre
                                             WHERE  show_type = 'Movie'
                                             GROUP  BY genre_id)
 ORDER  BY genrename 
-    ''').fetchall()
-    return render_template('top_durationMovies.html', topDurationMovies=topdurationmovies)
+    """
+    ).fetchall()
+    return render_template(
+        "top_durationMovies.html", topDurationMovies=topdurationmovies
+    )
 
-@APP.route('/queries/topexporters/')
+
+@APP.route("/queries/topexporters/")
 def top_exporters():
-    exporters = db.execute('''
+    exporters = db.execute(
+        """
         SELECT c.name AS country_name, c.country_id, SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies, SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tv, COUNT(s.show_id) AS total_content
         FROM Country c
         JOIN Show_Country sc ON c.country_id = sc.country_id
@@ -306,29 +383,46 @@ def top_exporters():
         GROUP BY c.country_id
         ORDER BY total_content DESC
         LIMIT 20
-    ''').fetchall()
-    exporters_total = db.execute('''
+    """
+    ).fetchall()
+    exporters_total = db.execute(
+        """
         SELECT SUM(CASE WHEN s.show_type = 'Movie' THEN 1 ELSE 0 END) AS total_movies, SUM(CASE WHEN s.show_type = 'TV Show' THEN 1 ELSE 0 END) AS total_tv, COUNT(s.show_id) AS total_content
         FROM Country c
         JOIN Show_Country sc ON c.country_id = sc.country_id
         JOIN Show s ON sc.show_id = s.show_id
         ORDER BY total_content DESC
-    ''').fetchone()
-    return render_template('top_exporters.html', exporters=exporters, exporters_total=exporters_total)
+    """
+    ).fetchone()
+    return render_template(
+        "top_exporters.html", exporters=exporters, exporters_total=exporters_total
+    )
 
-@APP.route('/queries/avggenreduration/')
+
+@APP.route("/queries/avggenreduration/")
 def avg_durationMovies():
-    avgShowGenreDuration = db.execute('''
+    avgShowGenreDuration = db.execute(
+        """
         select name, show_type, genre_id, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by genre_id, show_type order by show_type, avg desc
-    ''').fetchall()
-    avgMovieDuration, avgTVDuration = db.execute('''
+    """
+    ).fetchall()
+    avgMovieDuration, avgTVDuration = db.execute(
+        """
         select show_type, round(avg(duration_value), 2) avg, duration_unit from show natural join show_genre natural join genre group by show_type order by show_type
-    ''').fetchmany(2)
-    return render_template('avg_durationShows.html', avgShowGenreDuration=avgShowGenreDuration, avgTVDuration=avgTVDuration, avgMovieDuration=avgMovieDuration)
+    """
+    ).fetchmany(2)
+    return render_template(
+        "avg_durationShows.html",
+        avgShowGenreDuration=avgShowGenreDuration,
+        avgTVDuration=avgTVDuration,
+        avgMovieDuration=avgMovieDuration,
+    )
 
-@APP.route('/queries/actorsdirectors/')
+
+@APP.route("/queries/actorsdirectors/")
 def actors_directors():
-    actorsdirectors = db.execute('''
+    actorsdirectors = db.execute(
+        """
     SELECT 
             p.person_id, p.name, SUM(CASE WHEN c.role = 'Actor' THEN 1 ELSE 0 END) as count_actor, SUM(CASE WHEN c.role = 'Director' THEN 1 ELSE 0 END) as count_director, COUNT(DISTINCT c.show_id) as total_shows
         FROM Person p
@@ -336,34 +430,43 @@ def actors_directors():
         GROUP BY p.person_id
         HAVING count_actor > 0 AND count_director > 0
         ORDER BY total_shows DESC
-    ''').fetchall()
-    return render_template('actors_directors.html', actorsdirectors=actorsdirectors)
+    """
+    ).fetchall()
+    return render_template("actors_directors.html", actorsdirectors=actorsdirectors)
 
-@APP.route('/queries/monthlyreleases/')
+
+@APP.route("/queries/monthlyreleases/")
 def monthly_releases():
-    monthlyreleases = db.execute('''
+    monthlyreleases = db.execute(
+        """
         SELECT strftime('%m', date_added) as month, COUNT(show_id) as count
         FROM Show
         WHERE date_added IS NOT NULL
         GROUP BY month
         ORDER BY month ASC
-    ''').fetchall()
-    return render_template('monthly_releases.html', monthlyreleases=monthlyreleases)
+    """
+    ).fetchall()
+    return render_template("monthly_releases.html", monthlyreleases=monthlyreleases)
 
-@APP.route('/queries/cumulativegrowth/')
+
+@APP.route("/queries/cumulativegrowth/")
 def cumulative_growth():
-    growth = db.execute('''
+    growth = db.execute(
+        """
         SELECT strftime('%Y-%m', date_added) as month, COUNT(*) as monthly_added, SUM(COUNT(*)) OVER (ORDER BY strftime('%Y-%m', date_added)) as cumulative_total
         FROM Show
         WHERE date_added IS NOT NULL
         GROUP BY month
         ORDER BY month
-    ''').fetchall()
-    return render_template('cumulative_growth.html', growth=growth)
+    """
+    ).fetchall()
+    return render_template("cumulative_growth.html", growth=growth)
 
-@APP.route('/queries/weekdayreleases/')
+
+@APP.route("/queries/weekdayreleases/")
 def weekday_releases():
-    weekdayreleases = db.execute('''
+    weekdayreleases = db.execute(
+        """
         SELECT 
             CASE CAST(strftime('%w', date_added) AS INTEGER)
                 WHEN 0 THEN 'Domingo'
@@ -380,12 +483,15 @@ def weekday_releases():
         WHERE date_added IS NOT NULL
         GROUP BY day_index
         ORDER BY day_index ASC
-    ''').fetchall()
-    return render_template('weekday_releases.html', weekdayreleases=weekdayreleases)
+    """
+    ).fetchall()
+    return render_template("weekday_releases.html", weekdayreleases=weekdayreleases)
 
-@APP.route('/queries/genresbyrating/')
+
+@APP.route("/queries/genresbyrating/")
 def genres_by_rating():
-    genres_rating = db.execute('''
+    genres_rating = db.execute(
+        """
         SELECT 
             g.genre_id,
             g.name AS genre_name,
@@ -400,12 +506,15 @@ def genres_by_rating():
         WHERE s.show_id IS NOT NULL
         GROUP BY g.genre_id, r.rating_id
         ORDER BY g.name ASC, total_shows DESC
-    ''').fetchall()
-    return render_template('genres_by_rating.html', genres_rating=genres_rating)
+    """
+    ).fetchall()
+    return render_template("genres_by_rating.html", genres_rating=genres_rating)
 
-@APP.route('/queries/topdirectors/')
+
+@APP.route("/queries/topdirectors/")
 def top_directors():
-    top_dirs = db.execute('''
+    top_dirs = db.execute(
+        """
         SELECT 
             p.person_id,
             p.name,
@@ -419,5 +528,6 @@ def top_directors():
         GROUP BY p.person_id
         ORDER BY total_productions DESC
         LIMIT 10
-    ''').fetchall()
-    return render_template('top_directors.html', top_dirs=top_dirs)
+    """
+    ).fetchall()
+    return render_template("top_directors.html", top_dirs=top_dirs)
