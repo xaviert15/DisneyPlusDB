@@ -1,36 +1,24 @@
-{% extends "layout.html" %}
-
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <div class="zone-header">
-  <h1>Top 3 Filmes Mais Longos por Género</h1>
-  <p>Ranking dos filmes com maior duração em cada categoria.</p>
+  <h1>Filme Mais Longo Por Género</h1>
+  <p>O filme de maior duração em cada género.</p>
 </div>
 
 <div class="table-container">
   <table class="styled-table">
     <thead>
       <tr>
-        <th class="col-dur">Duração</th>
+        <th class="col-genre">Género</th>
+        <th class="col-title">Filme</th>
+        <th class="col-duration">Duração</th>
       </tr>
     </thead>
     <tbody>
-      {% for g in topDurationMovies %}
-      
-      {% if loop.changed(g.genrename) %}
-      <tr class="genre-header-row">
-        <td colspan="3">
-            <a href="/genre/{{ g.genreID }}/" class="genre-link">
-                <i class="bi bi-tag-fill"></i> {{ g.genrename }}
-            </a>
-        </td>
-      </tr>
-      {% endif %}
-
+      {% for show in topDurationMovies %}
       <tr>
-        <td class="col-title"> 
-            <a href="/show/{{ g.showID }}/">{{ g.movietitle }}</a>
-        </td>
-        <td class="col-dur">{{ g.duration_value }} {{g.duration_unit}}</td>
+        <td class="col-genre"><a href="/genre/{{ show.genreID }}/">{{ show.genrename }}</a></td>
+        <td class="col-title"><a href="/show/{{ show.showID }}/">{{ show.movietitle }}</a></td>
+        <td class="col-duration">{{ show.duration_value }} {{ show.duration_unit }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -43,6 +31,7 @@
     border-radius: 8px;
     border: 1px solid var(--border-color);
     background-color: var(--bg-secondary);
+    margin-top: 2rem;
   }
 
   .styled-table {
@@ -54,7 +43,7 @@
 
   .styled-table th,
   .styled-table td {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 1.5rem;
   }
 
   .styled-table thead tr {
@@ -66,72 +55,30 @@
     border-bottom: 2px solid var(--border-color);
   }
 
-  .genre-header-row {
-      background-color: rgba(255, 255, 255, 0.08); /* Um pouco mais claro que o fundo */
-      border-bottom: 1px solid var(--border-color);
-  }
-  
-  .genre-link {
-      color: #61dafb; 
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-decoration: none;
-      font-size: 0.9rem;
-  }
-  
-  .genre-link:hover {
-      text-decoration: underline;
-      color: #fff;
-  }
-
   .styled-table tbody tr {
     border-bottom: 1px solid var(--border-color);
     transition: background-color 0.2s ease;
   }
-  
-  .styled-table tbody tr:not(.genre-header-row):hover {
+
+  .styled-table tbody tr:last-of-type {
+    border-bottom: none;
+  }
+
+  .styled-table tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.03);
   }
 
-  .col-title {
-      width: 60%;
-  }
-
-  .col-dur {
-      width: 30%;
-      text-align: right;
-      font-family: monospace;
-      color: var(--text-secondary);
-  }
-
-  /* Estilo dos Links */
-  .col-title a {
-        color: var(--text-primary);
+  .col-title a, .col-genre a {
+        color: inherit;
         text-decoration: none;
-        font-weight: 500;
+        font-weight: bold;
         transition: color 0.2s;
     }
 
-  .col-title a:hover {
+  .col-title a:hover, .col-genre a:hover{
         color: #61dafb;
         text-decoration: underline;
         cursor: pointer;
-    }
-
-    .badge-rank {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        line-height: 24px;
-        border-radius: 50%;
-        background-color: rgba(255,255,255,0.1);
-        font-size: 0.8rem;
-        font-weight: bold;
-    }
-    .rank-1 {
-        background-color: #ffd700;
-        color: #000;
     }
 </style>
 
