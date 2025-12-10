@@ -10,7 +10,6 @@
   <table class="styled-table">
     <thead>
       <tr>
-        <th class="col-rank">#</th> <th class="col-title">Título</th>
         <th class="col-dur">Duração</th>
       </tr>
     </thead>
@@ -28,9 +27,6 @@
       {% endif %}
 
       <tr>
-        <td class="col-rank">
-            <span class="badge-rank rank-{{ g.rank }}">{{ g.rank }}</span>
-        </td>
         <td class="col-title"> 
             <a href="/show/{{ g.showID }}/">{{ g.movietitle }}</a>
         </td>
@@ -96,12 +92,6 @@
   
   .styled-table tbody tr:not(.genre-header-row):hover {
     background-color: rgba(255, 255, 255, 0.03);
-  }
-
-  .col-rank {
-      width: 10%;
-      text-align: center;
-      color: var(--text-secondary);
   }
 
   .col-title {

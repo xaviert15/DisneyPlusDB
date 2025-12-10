@@ -275,20 +275,21 @@ def top_actors():
 
 @APP.route('/queries/topdurationmovies/')
 def top_DurationMovies():
-    topDurationMovies = db.execute('''
-        WITH RankedMovies AS (
-            SELECT g.name AS genrename, s.title AS movietitle, s.duration_value, s.duration_unit, g.genre_id AS genreID, s.show_id AS showID,
-                RANK() OVER (PARTITION BY g.genre_id ORDER BY s.duration_value DESC) AS rank
-            FROM Show s
-            JOIN Show_Genre sg ON s.show_id = sg.show_id
-            JOIN Genre g ON sg.genre_id = g.genre_id
-            WHERE s.show_type = 'Movie'
-        )
-        SELECT * FROM RankedMovies 
-        WHERE rank <= 3
-        ORDER BY genrename ASC, rank ASC
+    topdurationmovies = db.execute('''
+        SELECT NAME     AS genrename,
+               title    AS movietitle,
+               duration_value,
+               duration_unit,
+               genre_id AS genreID,
+               show_id  AS showID
+        FROM   Show
+               natural JOIN show_genre
+               natural JOIN genre
+        WHERE  show_type = 'Movie'
+        GROUP  BY genre_id
+        ORDER  BY genrename 
     ''').fetchall()
-    return render_template('top_durationMovies.html', topDurationMovies=topDurationMovies)
+    return render_template('top_durationMovies.html', topDurationMovies=topdurationmovies)
 
 @APP.route('/queries/topexporters/')
 def top_exporters():
