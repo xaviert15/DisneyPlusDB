@@ -282,12 +282,17 @@ def top_DurationMovies():
                duration_unit,
                genre_id AS genreID,
                show_id  AS showID
-        FROM   Show
+        FROM   show
                natural JOIN show_genre
                natural JOIN genre
         WHERE  show_type = 'Movie'
-        GROUP  BY genre_id
-        ORDER  BY genrename 
+               AND ( genre_id, duration_value ) IN (SELECT genre_id,
+                                                   Max(duration_value)
+                                            FROM   show
+                                                   natural JOIN show_genre
+                                            WHERE  show_type = 'Movie'
+                                            GROUP  BY genre_id)
+ORDER  BY genrename 
     ''').fetchall()
     return render_template('top_durationMovies.html', topDurationMovies=topdurationmovies)
 
